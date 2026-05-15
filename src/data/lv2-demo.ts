@@ -27,30 +27,29 @@ interface CategorySpec {
 const CATEGORIES: CategorySpec[] = [
   { category: 'apple', label: '사과', emoji: '🍎', defaultSize: { w: 105, h: 97 },
     instances: [
-      { x: 872, y: 1022, w: 105, h: 97, z: 28 },
-      { x: 401, y: 554, w: 105, h: 97, z: 34 },
+      { x: 872, y: 1022, w: 105, h: 97, z: 25 },
+      { x: 401, y: 554, w: 105, h: 97, z: 31 },
     ] },
 
   { category: 'chicken', label: '치킨', emoji: '🍗', defaultSize: { w: 126, h: 62 },
     instances: [
-      { x: 528, y: 531, w: 126, h: 62, z: 31 },
+      { x: 528, y: 531, w: 126, h: 62, z: 28 },
     ] },
 
   { category: 'cibdunebt', label: '양념통', emoji: '🧂', defaultSize: { w: 50, h: 90 }, variants: 4,
     instances: [
-      { x: 865, y: 351, w: 51, h: 122, z: 19, v: 4 },
-      { x: 480, y: 500, w: 39, h: 67, z: 30, v: 2 },
-      { x: 872, y: 211, w: 39, h: 67, z: 43, v: 2 },
-      { x: 310, y: 213, w: 41, h: 70, z: 42, r: 1.70, v: 2 },
-      { x: 930, y: 750, w: 53, h: 90, z: 41, v: 2 },
-      { x: 1002, y: 323, w: 39, h: 67, z: 44, v: 2 },
-      { x: 1459, y: 768, w: 48, h: 82, z: 45, r: 0.30, v: 2 },
+      { x: 480, y: 500, w: 39, h: 67, z: 27, v: 2 },
+      { x: 872, y: 211, w: 39, h: 67, z: 39, v: 2 },
+      { x: 310, y: 213, w: 41, h: 70, z: 38, r: 1.70, v: 2 },
+      { x: 930, y: 750, w: 53, h: 90, z: 37, v: 2 },
+      { x: 1002, y: 323, w: 39, h: 67, z: 40, v: 2 },
+      { x: 1459, y: 768, w: 48, h: 82, z: 41, r: 0.30, v: 2 },
     ] },
 
   { category: 'cup', label: '컵', emoji: '☕', defaultSize: { w: 95, h: 76 },
     instances: [
       { x: 868, y: 874, w: 95, h: 76, z: 8, r: -0.60 },
-      { x: 697, y: 471, w: 70, h: 56, z: 20, r: 0.20 },
+      { x: 716, y: 404, w: 70, h: 56, z: 49, r: 0.20 },
       { x: 1398, y: 772, w: 70, h: 56, z: 11, r: 0.20 },
     ] },
 
@@ -63,29 +62,29 @@ const CATEGORIES: CategorySpec[] = [
     instances: [
       { x: 791, y: 405, w: 84, h: 73, z: 12, r: -0.10 },
       { x: 1166, y: 910, w: 118, h: 102, z: 13, r: -0.70 },
-      { x: 630, y: 819, w: 78, h: 68, z: 38, r: 0.60 },
+      { x: 630, y: 819, w: 78, h: 68, z: 34, r: 0.60 },
       { x: 1306, y: 408, w: 78, h: 68, z: 14, r: 1.10 },
     ] },
 
   { category: 'eeg', label: '깨진 계란', emoji: '🥚', defaultSize: { w: 101, h: 97 },
     instances: [
-      { x: 1088, y: 650, w: 101, h: 97, z: 23 },
-      { x: 1413, y: 895, w: 111, h: 106, z: 25 },
-      { x: 740, y: 1033, w: 95, h: 91, z: 26 },
-      { x: 834, y: 410, w: 100, h: 96, z: 27 },
+      { x: 1088, y: 650, w: 101, h: 97, z: 20 },
+      { x: 1413, y: 895, w: 111, h: 106, z: 22 },
+      { x: 740, y: 1033, w: 95, h: 91, z: 23 },
+      { x: 834, y: 410, w: 100, h: 96, z: 24 },
     ] },
 
   { category: 'flour', label: '밀가루', emoji: '🌾', defaultSize: { w: 130, h: 104 },
     instances: [
       { x: 1251, y: 405, w: 130, h: 104, z: 15 },
-      { x: 930, y: 1058, w: 165, h: 132, z: 29 },
+      { x: 930, y: 1058, w: 165, h: 132, z: 26 },
       { x: 916, y: 706, w: 143, h: 115, z: 5 },
     ] },
 
   { category: 'fork', label: '포크', emoji: '🍴', defaultSize: { w: 108, h: 99 },
     instances: [
-      { x: 843, y: 718, w: 108, h: 99, z: 49 },
-      { x: 994, y: 361, w: 76, h: 69, z: 50, r: -0.90 },
+      { x: 843, y: 718, w: 108, h: 99, z: 45 },
+      { x: 994, y: 361, w: 76, h: 69, z: 46, r: -0.90 },
     ] },
 
   { category: 'greenonion', label: '파', emoji: '🌿', defaultSize: { w: 150, h: 80 },
@@ -96,8 +95,8 @@ const CATEGORIES: CategorySpec[] = [
 
   { category: 'milk', label: '우유', emoji: '🥛', defaultSize: { w: 71, h: 111 },
     instances: [
-      { x: 1430, y: 183, w: 67, h: 105, z: 40 },
-      { x: 916, y: 377, w: 70, h: 110, z: 51 },
+      { x: 1430, y: 183, w: 67, h: 105, z: 36 },
+      { x: 916, y: 377, w: 70, h: 110, z: 47 },
     ] },
 
   { category: 'mixer', label: '믹서', emoji: '🥤', defaultSize: { w: 144, h: 122 },
@@ -107,13 +106,13 @@ const CATEGORIES: CategorySpec[] = [
 
   { category: 'nife', label: '칼', emoji: '🔪', defaultSize: { w: 71, h: 130 },
     instances: [
-      { x: 1136, y: 726, w: 71, h: 130, z: 32 },
-      { x: 934, y: 183, w: 47, h: 86, z: 33, r: 0.70 },
+      { x: 1136, y: 726, w: 71, h: 130, z: 29 },
+      { x: 934, y: 183, w: 47, h: 86, z: 30, r: 0.70 },
     ] },
 
   { category: 'onion', label: '양파', emoji: '🧅', defaultSize: { w: 116, h: 111 },
     instances: [
-      { x: 1413, y: 833, w: 116, h: 111, z: 24 },
+      { x: 1413, y: 833, w: 116, h: 111, z: 21 },
       { x: 425, y: 490, w: 116, h: 111, z: 7 },
     ] },
 
@@ -121,26 +120,26 @@ const CATEGORIES: CategorySpec[] = [
     instances: [
       { x: 1275, y: 450, w: 105, h: 72, z: 16 },
       { x: 1501, y: 228, w: 105, h: 72, z: 18, r: -0.50 },
-      { x: 1148, y: 730, w: 141, h: 97, z: 48, r: -0.50 },
-      { x: 661, y: 455, w: 115, h: 79, z: 21, r: -0.70 },
-      { x: 599, y: 956, w: 147, h: 101, z: 22, r: -0.40 },
+      { x: 1148, y: 730, w: 141, h: 97, z: 44, r: -0.50 },
+      { x: 664, y: 460, w: 115, h: 79, z: 50, r: -0.70 },
+      { x: 599, y: 956, w: 147, h: 101, z: 19, r: -0.40 },
     ] },
 
   { category: 'scoop', label: '국자', emoji: '🥄', defaultSize: { w: 112, h: 118 },
     instances: [
-      { x: 697, y: 456, w: 112, h: 118, z: 35, r: 0.40 },
-      { x: 1190, y: 350, w: 74, h: 78, z: 37 },
-      { x: 1307, y: 32, w: 91, h: 96, z: 36, r: 1.00 },
+      { x: 697, y: 459, w: 112, h: 118, z: 51, r: 0.40 },
+      { x: 1190, y: 350, w: 74, h: 78, z: 33 },
+      { x: 1307, y: 32, w: 91, h: 96, z: 32, r: 1.00 },
     ] },
 
   { category: 'soup', label: '국', emoji: '🍲', defaultSize: { w: 136, h: 128 },
     instances: [
-      { x: 578, y: 791, w: 136, h: 128, z: 39 },
+      { x: 578, y: 791, w: 136, h: 128, z: 35 },
     ] },
 
   { category: 'source', label: '소스', emoji: '🍶', defaultSize: { w: 143, h: 98 },
     instances: [
-      { x: 761, y: 663, w: 143, h: 98, z: 52 },
+      { x: 761, y: 663, w: 143, h: 98, z: 48 },
     ] },
 
   { category: 'soysauce', label: '간장', emoji: '🍯', defaultSize: { w: 68, h: 183 },
@@ -153,7 +152,7 @@ const CATEGORIES: CategorySpec[] = [
   { category: 'spoon', label: '숟가락', emoji: '🥄', defaultSize: { w: 120, h: 116 },
     instances: [
       { x: 1225, y: 694, w: 120, h: 116, z: 1, r: -0.40 },
-      { x: 1498, y: 853, w: 93, h: 90, z: 46, r: -0.90 },
+      { x: 1498, y: 853, w: 93, h: 90, z: 42, r: -0.90 },
     ] },
 
   { category: 'towel', label: '수건', emoji: '🧴', defaultSize: { w: 77, h: 147 },
@@ -163,7 +162,7 @@ const CATEGORIES: CategorySpec[] = [
 
   { category: 'trashbeen', label: '쓰레기통', emoji: '🗑️', defaultSize: { w: 167, h: 198 },
     instances: [
-      { x: 1567, y: 760, w: 167, h: 198, z: 47 },
+      { x: 1567, y: 760, w: 167, h: 198, z: 43 },
     ] },
 ];
 
@@ -210,9 +209,8 @@ export const LV2_DEMO: SceneData = {
   interactiveObjects: [],
   timeLimit: 120,
   pig: {
-    position: { x: 425, y: 790 },
+    position: { x: 425, y: 788 },
     size: 200,
   },
-  // 키친 BG에 좌측 노란 여백이 많아 왼쪽으로 시프트
   contentShiftX: -120,
 };
