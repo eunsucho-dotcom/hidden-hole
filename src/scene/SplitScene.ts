@@ -4,6 +4,7 @@ import {
   GAME_HEIGHT,
   LEFT_PANEL_WIDTH,
   SCENE_AREA_WIDTH,
+  BG_NATIVE_WIDTH,
   COLORS,
   SCORING,
   SKILLS,
@@ -572,13 +573,13 @@ export class SplitScene extends Container {
   private setupBackground(messyTex?: Texture): void {
     if (messyTex) {
       this.sceneBackground = new Sprite(messyTex);
-      (this.sceneBackground as Sprite).width = SCENE_AREA_WIDTH;
+      // 원본 폭 유지 (사물 위치는 폭 1740 기준으로 잡혀 있음)
+      (this.sceneBackground as Sprite).width = BG_NATIVE_WIDTH;
       (this.sceneBackground as Sprite).height = GAME_HEIGHT;
       this.sceneContainer.addChildAt(this.sceneBackground, 0);
     } else {
-      // 플레이스홀더 배경 (어두운 네이비)
       this.sceneBackground = new Graphics()
-        .rect(0, 0, SCENE_AREA_WIDTH, GAME_HEIGHT)
+        .rect(0, 0, BG_NATIVE_WIDTH, GAME_HEIGHT)
         .fill({ color: COLORS.LV1_NAVY });
       this.sceneContainer.addChildAt(this.sceneBackground, 0);
     }

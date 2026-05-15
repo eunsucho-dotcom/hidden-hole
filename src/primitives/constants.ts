@@ -8,6 +8,9 @@ export const GAME_HEIGHT = 1080;
 export const LEFT_PANEL_WIDTH = 240;
 export const SCENE_AREA_X = LEFT_PANEL_WIDTH;
 export const SCENE_AREA_WIDTH = GAME_WIDTH - LEFT_PANEL_WIDTH;
+// BG 원본 폭 — 패널 폭 변경 전(180) 기준으로 사물 위치가 잡혀 있으므로
+// bg 크기는 원본 폭 유지해야 사물과 정렬이 맞음.
+export const BG_NATIVE_WIDTH = GAME_WIDTH - 180; // 1740
 
 // 아이템 슬롯 크기 (1열, 크게)
 export const ITEM_SLOT_SIZE = 144;
