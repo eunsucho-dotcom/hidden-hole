@@ -1,0 +1,45 @@
+/* ===== 커스텀 폰트 등록 영역 =====
+ * public/fonts/ 폴더에 .ttf 또는 .woff2 파일을 넣고
+ * 아래 @font-face 블록의 주석을 풀어 파일명만 바꾸세요.
+ * 그 다음 src/scene/LeftPanel.ts 상단의 FONT_FAMILY 값을
+ * 여기서 정한 이름으로 변경하면 됩니다.
+ */
+@font-face {
+  font-family: 'ARLRDBD';
+  src: url('/fonts/ARLRDBD.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  /* PixiJS 캔버스가 PNG 원본보다 채도가 높게 보이는 현상 보정 */
+  filter: saturate(0.88);
+}
