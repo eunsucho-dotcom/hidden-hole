@@ -49,7 +49,7 @@ export class TitleScreen extends Container {
 
     // Play 버튼 컨테이너 (PNG 로드 전 fallback Graphics 안에)
     const btn = new Container();
-    btn.position.set(GAME_WIDTH / 2, GAME_HEIGHT - 190);
+    btn.position.set(GAME_WIDTH / 2, GAME_HEIGHT - 170);
 
     const btnBgFallback = new Graphics()
       .roundRect(-180, -55, 360, 110, 24)
