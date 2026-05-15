@@ -4,7 +4,8 @@ export const GAME_WIDTH = 1920;
 export const GAME_HEIGHT = 1080;
 
 // 좌측 아이템 패널 (Hidden Folks 스타일 - 1열 세로 스크롤, 22+개 카테고리 수용)
-export const LEFT_PANEL_WIDTH = 180;
+// 240 = active 슬롯 1.2x(173px) + 30px 우측 시프트 + 여유 공간
+export const LEFT_PANEL_WIDTH = 240;
 export const SCENE_AREA_X = LEFT_PANEL_WIDTH;
 export const SCENE_AREA_WIDTH = GAME_WIDTH - LEFT_PANEL_WIDTH;
 
