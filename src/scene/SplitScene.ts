@@ -411,9 +411,14 @@ export class SplitScene extends Container {
         const h = Math.round(s.data.size.height);
         const z = zMap.get(s) ?? 0;
         const r = s.data.rotation ? `, r: ${s.data.rotation.toFixed(2)}` : '';
-        const texName = s.data.texture.replace('/images/trash_lv1_', '').replace('.png', '');
+        // Lv1: trash_lv1_<cat><N>.png, Lv2: trash_lv2_<cat>_<N>.png
+        const texName = s.data.texture
+          .replace(/^\/images\/trash_lv\d+_/, '')
+          .replace('.png', '');
         const variantSuffix = texName.startsWith(s.data.category) ? texName.substring(s.data.category.length) : '';
-        const v = /^\d+$/.test(variantSuffix) ? `, v: ${variantSuffix}` : '';
+        // Lv1: "1" / Lv2: "_1" 둘 다 인식
+        const m = variantSuffix.match(/^_?(\d+)$/);
+        const v = m ? `, v: ${m[1]}` : '';
         output += `  { x: ${x}, y: ${y}, w: ${w}, h: ${h}, z: ${z}${r}${v} },\n`;
       }
       output += `],\n\n`;
