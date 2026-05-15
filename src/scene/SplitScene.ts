@@ -302,7 +302,7 @@ export class SplitScene extends Container {
     console.log(`%c[EDIT MODE: ${this.editMode ? 'ON' : 'OFF'}]`,
       `background: ${this.editMode ? '#FF9F68' : '#444'}; color: white; padding: 4px; font-weight: bold;`);
     if (this.editMode) {
-      console.log('💡 배경 = bg_lv1_messy 시안. PNG 사물을 시안의 같은 위치에 드래그하세요.');
+      console.log('💡 편집 모드: messy 배경 표시. 사물 드래그/D복사/X삭제/Q,T회전 가능.');
       console.log('S 키 = 클립보드에 위치 자동 복사');
     }
   }
@@ -502,9 +502,10 @@ export class SplitScene extends Container {
 
     this.setupBackground(messyTex);
     if (cleanTex) this.cleanBackgroundTexture = cleanTex;
-    // 편집 모드용 messy 텍스처도 별도 로드
+    // 편집 모드용 messy 텍스처 — 데이터의 backgroundMessy 사용
+    // (Lv2는 clean과 동일하지만 그래도 같은 경로로 로드)
     try {
-      this.messyBackgroundTexture = await Assets.load('/images/bg_lv1_messy.png');
+      this.messyBackgroundTexture = await Assets.load(this.sceneData.backgroundMessy);
     } catch {}
     this.setupPig();
     this.setupTrash(textureMap);
