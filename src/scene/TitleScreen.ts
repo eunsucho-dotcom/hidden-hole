@@ -18,8 +18,8 @@ export class TitleScreen extends Container {
   private loadingTxtSprite?: Sprite;
   private barDisplayW = 600;
   private barDisplayH = 60;
-  private fillInsetX = 14;
-  private fillInsetY = 5;
+  private fillInsetX = 18;
+  private fillInsetY = 15;
   private loadingProgress = 0;
   private loadingDuration = 2400;
   // Play 버튼
@@ -137,9 +137,9 @@ export class TitleScreen extends Container {
       // NineSliceSprite — 좌우 30px(둥근 끝) 고정, 가운데만 가로 stretch
       this.loadingBarFillSprite = new NineSliceSprite({
         texture: fillTex,
-        leftWidth: 30,
+        leftWidth: 50,
         topHeight: 0,
-        rightWidth: 30,
+        rightWidth: 50,
         bottomHeight: 0,
       });
       this.loadingBarFillSprite.width = fillFullW;
