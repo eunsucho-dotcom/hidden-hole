@@ -11,10 +11,14 @@ export class TitleScreen extends Container {
   private logoFallback?: Text;
   private logoSubFallback?: Text;
   private loadingBarFill?: Graphics;
-  private loadingBarWidth = 600;
-  private loadingBarHeight = 50;
+  // 화면에 표시되는 바 크기
+  private barDisplayW = 600;
+  private barDisplayH = 60;
+  // 노란 fill을 바 외곽선 안쪽에 그리기 위한 inset (좌우 / 상하)
+  private fillInsetX = 14;
+  private fillInsetY = 10;
   private loadingProgress = 0;
-  private loadingDuration = 2200; // 2.2초간 로딩 채워짐
+  private loadingDuration = 2400;
   private hasTriggeredPlay = false;
 
   constructor() {
@@ -26,18 +30,18 @@ export class TitleScreen extends Container {
       .fill({ color: COLORS.WARM_BEIGE });
     this.addChild(bg);
 
-    // 로고 placeholder
+    // 로고 placeholder (텍스트)
     this.logoFallback = new Text({
       text: 'Hidden Hole',
       style: {
-        fontSize: 180,
+        fontSize: 160,
         fill: COLORS.SUNSET_ORANGE,
         fontWeight: 'bold',
         stroke: { color: COLORS.DARK_CHARCOAL, width: 8 },
       },
     });
     this.logoFallback.anchor.set(0.5);
-    this.logoFallback.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 180);
+    this.logoFallback.position.set(GAME_WIDTH / 2, GAME_HEIGHT * 0.32);
     this.addChild(this.logoFallback);
 
     this.logoSubFallback = new Text({
@@ -49,22 +53,8 @@ export class TitleScreen extends Container {
       },
     });
     this.logoSubFallback.anchor.set(0.5);
-    this.logoSubFallback.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50);
+    this.logoSubFallback.position.set(GAME_WIDTH / 2, GAME_HEIGHT * 0.42);
     this.addChild(this.logoSubFallback);
-
-    // 하단 안내
-    const hint = new Text({
-      text: 'Lv1: The Breakup Night',
-      style: {
-        fontSize: 26,
-        fill: 0xffffff,
-        fontWeight: 'bold',
-        stroke: { color: 0x000000, width: 2 },
-      },
-    });
-    hint.anchor.set(0.5);
-    hint.position.set(GAME_WIDTH / 2, GAME_HEIGHT - 80);
-    this.addChild(hint);
 
     // 로고 PNG 로드 + 로딩바 셋업
     this.loadAssets();
@@ -85,25 +75,25 @@ export class TitleScreen extends Container {
       this.logoFallback = undefined;
       this.logoSubFallback = undefined;
 
-      // 로고 풀스크린 cover
+      // 로고 — 풀스크린이 아니라 상단 중앙에 적당 크기로
       this.logoSprite = new Sprite(logoTex);
       this.logoSprite.anchor.set(0.5);
-      const scaleX = GAME_WIDTH / logoTex.width;
-      const scaleY = GAME_HEIGHT / logoTex.height;
-      const scale = Math.max(scaleX, scaleY);
+      // 가로 70% 너비로 fit
+      const targetW = GAME_WIDTH * 0.7;
+      const scale = targetW / logoTex.width;
       this.logoSprite.width = logoTex.width * scale;
       this.logoSprite.height = logoTex.height * scale;
-      this.logoSprite.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+      this.logoSprite.position.set(GAME_WIDTH / 2, GAME_HEIGHT * 0.38);
       this.addChildAt(this.logoSprite, 1);
     }
   }
 
   /**
-   * 로딩바 (외곽 PNG) + 로딩 텍스트 PNG + 노란 fill
+   * 로딩바 PNG (외곽선) + 안쪽 노란 fill + "Loading..." 텍스트 PNG
    */
   private async setupLoadingBar(): Promise<void> {
     const barCenterX = GAME_WIDTH / 2;
-    const barCenterY = GAME_HEIGHT - 200;
+    const barCenterY = GAME_HEIGHT * 0.82;
 
     // "Loading..." 텍스트 PNG
     let txtTex: Texture | undefined;
@@ -117,19 +107,11 @@ export class TitleScreen extends Container {
       const txtScale = txtTargetW / txtTex.width;
       txtSprite.width = txtTex.width * txtScale;
       txtSprite.height = txtTex.height * txtScale;
-      txtSprite.position.set(barCenterX, barCenterY - 70);
+      txtSprite.position.set(barCenterX, barCenterY - 60);
       this.addChild(txtSprite);
     }
 
-    // 노란 fill (바 외곽 안쪽). 외곽 PNG보다 안쪽에 그려져야 함
-    this.loadingBarFill = new Graphics();
-    this.loadingBarFill.position.set(
-      barCenterX - this.loadingBarWidth / 2,
-      barCenterY - this.loadingBarHeight / 2
-    );
-    this.addChild(this.loadingBarFill);
-
-    // 로딩바 외곽 PNG
+    // 로딩바 외곽 PNG (먼저 그리기 — 아래)
     let barTex: Texture | undefined;
     try {
       barTex = await Assets.load('/images/Loading-bar.png');
@@ -137,19 +119,23 @@ export class TitleScreen extends Container {
     if (barTex) {
       const barSprite = new Sprite(barTex);
       barSprite.anchor.set(0.5);
-      // 외곽 PNG 비율 유지하면서 너비 매칭
-      const targetW = this.loadingBarWidth + 20; // fill 보다 약간 더 큰 외곽
-      const scale = targetW / barTex.width;
+      const scale = this.barDisplayW / barTex.width;
       barSprite.width = barTex.width * scale;
       barSprite.height = barTex.height * scale;
       barSprite.position.set(barCenterX, barCenterY);
+      this.barDisplayH = barTex.height * scale; // 실제 높이로 갱신
       this.addChild(barSprite);
     }
+
+    // 노란 fill — 바 위에 그리되, 외곽선 안쪽에 맞도록 inset 적용
+    this.loadingBarFill = new Graphics();
+    this.loadingBarFill.position.set(
+      barCenterX - this.barDisplayW / 2 + this.fillInsetX,
+      barCenterY - this.barDisplayH / 2 + this.fillInsetY
+    );
+    this.addChild(this.loadingBarFill);
   }
 
-  /**
-   * 로딩바 채워지는 애니메이션 — 진행 100% 시 자동 onPlay
-   */
   private startLoadingAnimation(): void {
     const startTime = performance.now();
     const animate = () => {
@@ -160,7 +146,6 @@ export class TitleScreen extends Container {
         requestAnimationFrame(animate);
       } else if (!this.hasTriggeredPlay) {
         this.hasTriggeredPlay = true;
-        // 100% 도달 시 짧은 딜레이 후 자동 시작
         setTimeout(() => this.onPlayCallback?.(), 200);
       }
     };
@@ -170,11 +155,12 @@ export class TitleScreen extends Container {
   private redrawLoadingFill(): void {
     if (!this.loadingBarFill) return;
     this.loadingBarFill.clear();
-    const filledW = this.loadingBarWidth * this.loadingProgress;
-    if (filledW > 0) {
+    const fillW = (this.barDisplayW - this.fillInsetX * 2) * this.loadingProgress;
+    const fillH = this.barDisplayH - this.fillInsetY * 2;
+    if (fillW > 0) {
       this.loadingBarFill
-        .roundRect(0, 0, filledW, this.loadingBarHeight, 18)
-        .fill({ color: 0xefb63a }); // 노란색
+        .roundRect(0, 0, fillW, fillH, fillH / 2)
+        .fill({ color: 0xefb63a });
     }
   }
 

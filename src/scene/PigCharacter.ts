@@ -145,9 +145,10 @@ export class PigCharacter extends Container {
 
   /**
    * 입을 향한 사물 흡입 — 외부에서 사용할 좌표
+   * 새 sprite sheet의 돼지는 정면 향함 → 입은 중심 살짝 위
    */
   getMouthPosition(): { x: number; y: number } {
-    return { x: this.x, y: this.y - this.pigSize * 0.1 };
+    return { x: this.x, y: this.y - this.pigSize * 0.02 };
   }
 
   /**

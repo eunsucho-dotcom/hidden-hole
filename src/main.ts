@@ -94,13 +94,38 @@ class Game {
     const freshData = freshSceneData(data);
     const scene = new SplitScene(freshData);
     scene.onComplete((result) => {
-      // 결과 화면을 게임 위에 오버레이로 띄움
       const resultScreen = new ResultScreen(result);
-      // 재시작 버튼 → 다음 레벨이 있으면 그쪽으로, 없으면 같은 레벨 재시작
       const nextLevel = this.getNextLevel(data.id);
-      resultScreen.onRetry(() => this.showLevel(nextLevel ?? data));
-      resultScreen.onHome(() => this.showTitle());
+      // 다음 레벨 있으면 5초 후 자동 이동 (사용자가 retry/home 누르면 취소)
+      let autoTimer: number | undefined;
+      const cancelAuto = () => {
+        if (autoTimer !== undefined) {
+          clearTimeout(autoTimer);
+          autoTimer = undefined;
+        }
+      };
+      const cleanupResult = () => {
+        cancelAuto();
+        if (resultScreen.parent) this.root.removeChild(resultScreen);
+        resultScreen.destroy({ children: true });
+      };
+      // 재시작 = 같은 레벨 replay (다음 레벨 있으면 자동 진행이 처리)
+      resultScreen.onRetry(() => {
+        cleanupResult();
+        this.showLevel(data);
+      });
+      resultScreen.onHome(() => {
+        cleanupResult();
+        this.showTitle();
+      });
       this.root.addChild(resultScreen);
+      // 다음 레벨 있으면 5초 후 자동 진행
+      if (nextLevel) {
+        autoTimer = window.setTimeout(() => {
+          cleanupResult();
+          this.showLevel(nextLevel);
+        }, 5000);
+      }
     });
     this.root.addChild(scene);
     this.currentScene = scene;
