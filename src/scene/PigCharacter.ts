@@ -1,18 +1,21 @@
-import { Container, Graphics, Sprite, Text, Texture, Assets } from 'pixi.js';
-import { ACTIVATION } from '../primitives/constants';
+import { Container, Graphics, AnimatedSprite, Text, Texture, Rectangle, Assets } from 'pixi.js';
 
 /**
- * 시그니처 캐릭터 — 돼지인형
- * 게임 내내 씬에 앉아있다가 카테고리 흡입 시 입 벌리고 빨아들임
+ * 시그니처 캐릭터 — 돼지인형 (스프라이트시트 애니메이션)
  *
- * 상태:
- *   - closed: 입 닫음 (기본, idle 미세 흔들림)
- *   - open: 입 벌림 (흡입 중)
+ * 스프라이트시트 구조 (`/images/pig.png` 2000×2892):
+ *   - 프레임 사이즈: 400 × 482
+ *   - 5 cols × 5 rows = 25 + 마지막 row 1 = 총 26 프레임
+ *   - 프레임 0~25 순환 (입 닫힘 → 벌림 → 닫힘 loop)
+ *
+ * 동작:
+ *   - 평소: 천천히 26 프레임 루프 (살아있는 듯한 모션)
+ *   - openMouth: 살짝 확대 (놀라는 느낌, 애니메이션은 계속 루프)
+ *   - closeMouth: 꿀꺽 효과 (축소 → 원래 크기)
  */
 export class PigCharacter extends Container {
-  private closedSprite: Sprite | Graphics;
-  private openSprite: Sprite | Graphics;
-  private placeholderText?: Text;
+  private animSprite?: AnimatedSprite;
+  private placeholder: Container;
   private originalY: number;
   private idleTime = 0;
 
@@ -20,90 +23,85 @@ export class PigCharacter extends Container {
     super();
     this.originalY = 0;
 
-    // 입 닫은 상태 로드 시도
-    this.closedSprite = this.createPlaceholder('🐷', 0xf4a6a6) as any;
-    this.openSprite = this.createPlaceholder('😮', 0xf4a6a6) as any;
-    this.openSprite.visible = false;
+    // 플레이스홀더 (스프라이트시트 로드 전)
+    this.placeholder = this.createPlaceholder('🐷', 0xf4a6a6);
+    this.addChild(this.placeholder);
 
-    this.addChild(this.closedSprite as Container);
-    this.addChild(this.openSprite as Container);
-
-    this.loadTextures();
+    this.loadAnimation();
   }
 
   private createPlaceholder(emoji: string, color: number): Container {
     const container = new Container();
-
-    // 둥근 배경 (실제 PNG로 교체될 자리)
     const bg = new Graphics()
       .circle(0, 0, this.pigSize / 2)
       .fill({ color, alpha: 0.3 })
       .stroke({ color: 0xff69b4, width: 4 });
     container.addChild(bg);
-
-    // 이모지 텍스트
     const text = new Text({
       text: emoji,
       style: { fontSize: this.pigSize * 0.6 },
     });
     text.anchor.set(0.5);
     container.addChild(text);
-
-    return container as unknown as Sprite | Graphics & Container;
+    return container;
   }
 
-  private async loadTextures(): Promise<void> {
-    let closedTex: Texture | undefined;
-    let openTex: Texture | undefined;
-
+  private async loadAnimation(): Promise<void> {
+    let sheet: Texture | undefined;
     try {
-      closedTex = await Assets.load('/images/pig_closed.png');
+      sheet = await Assets.load('/images/pig.png');
     } catch {}
-    try {
-      openTex = await Assets.load('/images/pig_open.png');
-    } catch {}
+    if (!sheet) return;
 
-    if (closedTex) {
-      // 플레이스홀더 제거, 실제 스프라이트로 교체
-      this.removeChild(this.closedSprite as Container);
-      const sprite = new Sprite(closedTex);
-      sprite.anchor.set(0.5);
-      sprite.width = this.pigSize;
-      sprite.height = this.pigSize;
-      this.closedSprite = sprite;
-      this.addChildAt(this.closedSprite as Container, 0);
+    // 26 프레임 추출
+    const FRAME_W = 400;
+    const FRAME_H = 482;
+    const frames: Texture[] = [];
+    for (let row = 0; row < 6; row++) {
+      const colsThisRow = row === 5 ? 1 : 5;
+      for (let col = 0; col < colsThisRow; col++) {
+        frames.push(new Texture({
+          source: sheet.source,
+          frame: new Rectangle(col * FRAME_W, row * FRAME_H, FRAME_W, FRAME_H),
+        }));
+      }
     }
 
-    if (openTex) {
-      this.removeChild(this.openSprite as Container);
-      const sprite = new Sprite(openTex);
-      sprite.anchor.set(0.5);
-      sprite.width = this.pigSize;
-      sprite.height = this.pigSize;
-      sprite.visible = false;
-      this.openSprite = sprite;
-      this.addChildAt(this.openSprite as Container, 1);
-    }
+    this.animSprite = new AnimatedSprite(frames);
+    this.animSprite.anchor.set(0.5);
+    // 비율 유지 — pigSize를 짧은 변 기준
+    const scale = this.pigSize / Math.max(FRAME_W, FRAME_H);
+    this.animSprite.width = FRAME_W * scale;
+    this.animSprite.height = FRAME_H * scale;
+    this.animSprite.animationSpeed = 0.12; // ~7fps at 60fps render
+    this.animSprite.loop = true;
+    this.animSprite.play();
+
+    // 플레이스홀더 제거하고 애니메이션 스프라이트로 교체
+    this.removeChild(this.placeholder);
+    this.placeholder.destroy({ children: true });
+    this.addChild(this.animSprite);
   }
 
   /**
-   * 입 벌림 (흡입 시작)
+   * 입 벌림 (흡입 시작) — 살짝 확대 (애니메이션은 계속 루프)
    */
   openMouth(): void {
-    (this.closedSprite as Container).visible = false;
-    (this.openSprite as Container).visible = true;
-    // 살짝 확대 (놀라는 느낌)
+    if (this.animSprite) {
+      // 애니메이션 속도 빨라짐 (먹는 느낌)
+      this.animSprite.animationSpeed = 0.25;
+    }
     this.animateScale(1.1, 200);
   }
 
   /**
-   * 입 닫음 (흡입 끝)
+   * 입 닫음 (흡입 끝) — 꿀꺽 효과 + 평상 속도 복귀
    */
   closeMouth(): void {
-    // 꿀꺽 효과 — 살짝 축소 후 원래 크기로
     this.animateScale(0.95, 100, () => {
-      (this.openSprite as Container).visible = false;
-      (this.closedSprite as Container).visible = true;
+      if (this.animSprite) {
+        this.animSprite.animationSpeed = 0.12;
+      }
       this.animateScale(1.0, 200);
     });
   }
