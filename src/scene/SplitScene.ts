@@ -864,7 +864,8 @@ export class SplitScene extends Container {
         .fill({ color: COLORS.MINT_GREEN });
     }
     fullScreenBg.alpha = 0;
-    this.addChildAt(fullScreenBg, 0);
+    // sceneWrapper의 노란 fill 위에 덮이도록 최상위로 추가 (이전엔 index 0 으로 아래에 깔려서 가려짐)
+    this.addChild(fullScreenBg);
 
     // 페이드인
     const fadeStart = performance.now();
