@@ -80,11 +80,11 @@ export class ResultScreen extends Container {
     this.addChild(totalScore);
 
     // 버튼 2개 (PNG 아이콘)
-    this.renderButton('🔄', '/images/btn_retry.png', GAME_WIDTH / 2 - 130, GAME_HEIGHT / 2 + 300, () => {
+    this.renderButton('🔄', '/images/btn_retry.png', GAME_WIDTH / 2 - 130, GAME_HEIGHT / 2 + 250, () => {
       audio.play('button');
       this.onRetryCallback?.();
     });
-    this.renderButton('🏠', '/images/btn_home.png', GAME_WIDTH / 2 + 130, GAME_HEIGHT / 2 + 300, () => {
+    this.renderButton('🏠', '/images/btn_home.png', GAME_WIDTH / 2 + 130, GAME_HEIGHT / 2 + 250, () => {
       audio.play('button');
       this.onHomeCallback?.();
     });
