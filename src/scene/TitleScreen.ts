@@ -1,4 +1,4 @@
-import { Container, Graphics, Text, Sprite, Texture, Assets, FillGradient } from 'pixi.js';
+import { Container, Graphics, Text, Sprite, Texture, Assets, NineSliceSprite } from 'pixi.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../primitives/constants';
 import { audio } from '../audio/SoundManager';
 
@@ -12,7 +12,7 @@ export class TitleScreen extends Container {
   private logoFallback?: Text;
   private logoSubFallback?: Text;
   // 로딩
-  private loadingBarFillSprite?: Sprite;
+  private loadingBarFillSprite?: NineSliceSprite;
   private loadingBarFillMask?: Graphics;
   private loadingBarSprite?: Sprite;
   private loadingTxtSprite?: Sprite;
@@ -134,7 +134,14 @@ export class TitleScreen extends Container {
     if (fillTex) {
       const fillFullW = this.barDisplayW - this.fillInsetX * 2;
       const fillFullH = this.barDisplayH - this.fillInsetY * 2;
-      this.loadingBarFillSprite = new Sprite(fillTex);
+      // NineSliceSprite — 좌우 30px(둥근 끝) 고정, 가운데만 가로 stretch
+      this.loadingBarFillSprite = new NineSliceSprite({
+        texture: fillTex,
+        leftWidth: 30,
+        topHeight: 0,
+        rightWidth: 30,
+        bottomHeight: 0,
+      });
       this.loadingBarFillSprite.width = fillFullW;
       this.loadingBarFillSprite.height = fillFullH;
       this.loadingBarFillSprite.position.set(
