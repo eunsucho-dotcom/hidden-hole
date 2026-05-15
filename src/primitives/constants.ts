@@ -15,8 +15,8 @@ export const ITEM_SLOT_GAP = 28;
 export const PANEL_COLUMNS = 1;
 // 패널 스크롤 영역 시작 y — 상단 타이머 바(70px) 아래
 export const PANEL_SCROLL_TOP = 118;
-// 슬롯 컨테이너 상단 여백 — 첫 슬롯의 1.2x 확대 영역이 마스크에 잘리지 않도록
-export const SLOT_TOP_PADDING = 22;
+// 슬롯 컨테이너 상단 여백 — 첫 슬롯의 1.2x 확대 영역이 헤더와 겹치지 않도록 충분히
+export const SLOT_TOP_PADDING = 48;
 
 // 컬러 (spec.md와 동기화)
 export const COLORS = {
