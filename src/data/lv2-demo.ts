@@ -213,4 +213,6 @@ export const LV2_DEMO: SceneData = {
     position: { x: 425, y: 790 },
     size: 200,
   },
+  // 키친 BG에 좌측 노란 여백이 많아 왼쪽으로 시프트
+  contentShiftX: -120,
 };

@@ -100,16 +100,24 @@ export class SplitScene extends Container {
     // ? 슬롯이 맨 아래에 추가되며 자동 스크롤됐으니, 다시 active 카테고리(맨 위)로 스크롤
     this.leftPanel.scrollToActive();
 
-    // 메인 씬 컨테이너 (좌측 패널 옆에 위치)
-    this.sceneContainer = new Container();
-    this.sceneContainer.position.set(LEFT_PANEL_WIDTH, 0);
-    // 클리핑 마스크
+    // 씬 wrapper (좌측 패널 옆에 위치) — 마스크 + 노란 배경 fill
+    const sceneWrapper = new Container();
+    sceneWrapper.position.set(LEFT_PANEL_WIDTH, 0);
     const sceneMask = new Graphics()
       .rect(0, 0, SCENE_AREA_WIDTH, GAME_HEIGHT)
       .fill(0xffffff);
-    this.sceneContainer.addChild(sceneMask);
-    this.sceneContainer.mask = sceneMask;
-    this.addChild(this.sceneContainer);
+    sceneWrapper.addChild(sceneMask);
+    sceneWrapper.mask = sceneMask;
+    // 노란 배경 fill — 콘텐츠 시프트 후 빈공간을 좌측 패널 색과 통일
+    const yellowFill = new Graphics()
+      .rect(0, 0, SCENE_AREA_WIDTH, GAME_HEIGHT)
+      .fill(0xefb63a);
+    sceneWrapper.addChild(yellowFill);
+    // 실제 콘텐츠 컨테이너 — sceneData.contentShiftX 만큼 좌우 시프트
+    this.sceneContainer = new Container();
+    this.sceneContainer.x = sceneData.contentShiftX ?? 0;
+    sceneWrapper.addChild(this.sceneContainer);
+    this.addChild(sceneWrapper);
 
     // HUD (상단 + 스킬 슬롯)
     this.hud = new GameHUD();
@@ -161,7 +169,8 @@ export class SplitScene extends Container {
       const rect = canvas.getBoundingClientRect();
       const scaleX = GAME_WIDTH / rect.width;
       const scaleY = GAME_HEIGHT / rect.height;
-      this.lastPointerPos.x = (e.clientX - rect.left) * scaleX - LEFT_PANEL_WIDTH;
+      // sceneContainer가 좌측 시프트되어 있으면 그만큼 보정 (편집 모드 마우스 좌표가 sceneContainer-local 기준)
+      this.lastPointerPos.x = (e.clientX - rect.left) * scaleX - LEFT_PANEL_WIDTH - this.sceneContainer.x;
       this.lastPointerPos.y = (e.clientY - rect.top) * scaleY;
     };
     window.addEventListener('pointermove', this.pointerMoveHandler);

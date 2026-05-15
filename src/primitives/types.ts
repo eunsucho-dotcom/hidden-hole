@@ -53,6 +53,8 @@ export interface SceneData {
     position: Position;
     size: number; // 픽셀 크기 (정사각형 기준)
   };
+  // 콘텐츠 X 시프트 — 배경 좌측 노란 여백이 너무 크면 음수로 좌측 이동
+  contentShiftX?: number;
 }
 
 export type GamePhase = 'preview' | 'playing' | 'sucking' | 'reveal' | 'result';
