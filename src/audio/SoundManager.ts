@@ -6,9 +6,9 @@ import { Howl } from 'howler';
  *
  * 볼륨 정책:
  * - SFX: 1.0 (포어그라운드, ASMR 카타르시스)
- * - BGM: 0.07 (극히 약하게 — ASMR 클릭 사운드가 명확히 들리도록)
+ * - BGM: 0.04 (작게 — ASMR 클릭 사운드가 도드라지도록)
  */
-const BGM_TARGET_VOLUME = 0.07;
+const BGM_TARGET_VOLUME = 0.04;
 
 export class SoundManager {
   private sounds = new Map<string, Howl>();

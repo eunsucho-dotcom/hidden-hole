@@ -89,7 +89,7 @@ class Game {
   showLevel(data: SceneData): void {
     this.clearScene();
     // BGM 시작 (사용자가 게임 진입한 후, 브라우저 autoplay 허용됨)
-    audio.playBgm('bgm_lofi');
+    audio.playBgm('bgm_ambient');
     // 데이터 깊은 복제 — 상태 초기화로 재시작 시에도 정상 작동
     const freshData = freshSceneData(data);
     const scene = new SplitScene(freshData);
