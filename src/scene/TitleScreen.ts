@@ -19,7 +19,7 @@ export class TitleScreen extends Container {
   private barDisplayW = 600;
   private barDisplayH = 60;
   private fillInsetX = 14;
-  private fillInsetY = 10;
+  private fillInsetY = 5;
   private loadingProgress = 0;
   private loadingDuration = 2400;
   // Play 버튼
