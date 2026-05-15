@@ -90,7 +90,7 @@ export class PigCharacter extends Container {
     // 모든 프레임이 동일한 표시 크기로 — pigSize 정사각형
     this.animSprite.width = this.pigSize;
     this.animSprite.height = this.pigSize;
-    this.animSprite.animationSpeed = 0.28;
+    this.animSprite.animationSpeed = 0.15; // 평상시 느린 루프 (살랑살랑)
     this.animSprite.loop = true;
     this.animSprite.play();
 
@@ -101,26 +101,59 @@ export class PigCharacter extends Container {
   }
 
   /**
-   * 입 벌림 (흡입 시작) — 살짝 확대 (애니메이션은 계속 루프)
+   * 입 벌림 (흡입 시작) — 프레임 0→12(가장 크게 벌림)로 천천히 이동 후 정지
+   * 흡입되는 사물들이 입에 들어가는 동안 입은 활짝 벌린 상태 유지
    */
   openMouth(): void {
-    if (this.animSprite) {
-      // 애니메이션 속도 빨라짐 (먹는 느낌)
-      this.animSprite.animationSpeed = 0.5;
-    }
+    if (!this.animSprite) return;
+    this.animSprite.stop();
+    this.animSprite.loop = false;
     this.animateScale(1.1, 200);
+    // 600ms에 걸쳐 입 벌리는 모션 → 프레임 12에서 정지
+    this.playToFrame(12, 600);
   }
 
   /**
-   * 입 닫음 (흡입 끝) — 꿀꺽 효과 + 평상 속도 복귀
+   * 입 닫음 (흡입 끝) — 현재 프레임 → 25(닫힘)로 빠르게 + 꿀꺽 효과
    */
   closeMouth(): void {
+    if (!this.animSprite) return;
     this.animateScale(0.95, 100, () => {
-      if (this.animSprite) {
-        this.animSprite.animationSpeed = 0.28;
-      }
       this.animateScale(1.0, 200);
     });
+    // 입 닫는 모션 (꿀꺽) 350ms 후 idle 루프 재개
+    this.playToFrame(25, 350, () => {
+      if (this.animSprite) {
+        this.animSprite.loop = true;
+        this.animSprite.animationSpeed = 0.15;
+        this.animSprite.gotoAndPlay(0);
+      }
+    });
+  }
+
+  /** 프레임을 from→target까지 duration ms에 걸쳐 보간하며 재생 후 stop */
+  private frameAnimRaf?: number;
+  private playToFrame(target: number, duration: number, onComplete?: () => void): void {
+    if (this.frameAnimRaf !== undefined) cancelAnimationFrame(this.frameAnimRaf);
+    if (!this.animSprite) return;
+    const start = this.animSprite.currentFrame;
+    const startTime = performance.now();
+    const step = () => {
+      if (!this.animSprite) return;
+      const elapsed = performance.now() - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      // easeInOutQuad — 시작·끝 부드럽게
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      const frame = Math.round(start + (target - start) * eased);
+      this.animSprite.gotoAndStop(frame);
+      if (t < 1) {
+        this.frameAnimRaf = requestAnimationFrame(step);
+      } else {
+        this.frameAnimRaf = undefined;
+        if (onComplete) onComplete();
+      }
+    };
+    this.frameAnimRaf = requestAnimationFrame(step);
   }
 
   /**
