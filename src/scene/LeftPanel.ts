@@ -91,8 +91,8 @@ export class LeftPanel extends Container {
 
     // 슬롯 컨테이너 (스크롤됨)
     this.slotsContainer = new Container();
-    // 우측으로 23px (3 + 20) 이동, 헤더 텍스트와 거리 확보
-    this.slotsContainer.position.set(23, PANEL_SCROLL_TOP);
+    // 3px 우측 이동 (panel 폭 180 + 1.2x slot 173 이라 여유 거의 없음)
+    this.slotsContainer.position.set(3, PANEL_SCROLL_TOP);
     this.addChild(this.slotsContainer);
 
     // 슬롯 영역 마스크 (스크롤 시 위/아래로 흘러나가지 않게)
