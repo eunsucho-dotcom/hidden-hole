@@ -1,4 +1,4 @@
-import { Container, Graphics, Text, Sprite, Texture, Assets } from 'pixi.js';
+import { Container, Graphics, Text, Sprite, Texture, Assets, FillGradient } from 'pixi.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../primitives/constants';
 import { audio } from '../audio/SoundManager';
 
@@ -207,11 +207,22 @@ export class TitleScreen extends Container {
     this.loadingBarFill.clear();
     const fillW = (this.barDisplayW - this.fillInsetX * 2) * this.loadingProgress;
     const fillH = this.barDisplayH - this.fillInsetY * 2;
-    if (fillW > 0) {
-      this.loadingBarFill
-        .roundRect(0, 0, fillW, fillH, fillH / 2)
-        .fill({ color: 0xefb63a });
-    }
+    if (fillW <= 0) return;
+
+    // 베이스 — 노란색 세로 그라데이션 (위 밝음 → 아래 어두움)
+    const grad = new FillGradient(0, 0, 0, fillH);
+    grad.addColorStop(0, 0xfff0a0);   // 밝은 노랑 (top highlight)
+    grad.addColorStop(0.35, 0xffd060); // 노랑
+    grad.addColorStop(0.7, 0xf2a020);  // 진한 amber
+    grad.addColorStop(1, 0xc07000);    // 어두운 그림자 (bottom)
+    this.loadingBarFill
+      .roundRect(0, 0, fillW, fillH, fillH / 2)
+      .fill(grad);
+
+    // 상단 하이라이트 (광택)
+    this.loadingBarFill
+      .roundRect(4, 3, Math.max(0, fillW - 8), fillH * 0.4, fillH * 0.3)
+      .fill({ color: 0xffffff, alpha: 0.45 });
   }
 
   private showPlayButton(): void {
