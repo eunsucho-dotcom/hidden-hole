@@ -12,7 +12,8 @@ export class TitleScreen extends Container {
   private logoFallback?: Text;
   private logoSubFallback?: Text;
   // 로딩
-  private loadingBarFill?: Graphics;
+  private loadingBarFillSprite?: Sprite;
+  private loadingBarFillMask?: Graphics;
   private loadingBarSprite?: Sprite;
   private loadingTxtSprite?: Sprite;
   private barDisplayW = 600;
@@ -125,12 +126,32 @@ export class TitleScreen extends Container {
       this.addChild(this.loadingBarSprite);
     }
 
-    this.loadingBarFill = new Graphics();
-    this.loadingBarFill.position.set(
-      barCenterX - this.barDisplayW / 2 + this.fillInsetX,
-      barCenterY - this.barDisplayH / 2 + this.fillInsetY
-    );
-    this.addChild(this.loadingBarFill);
+    // 노란 fill PNG (입체감 있는 캡슐) — 마스크로 채워지는 영역 제어
+    let fillTex: Texture | undefined;
+    try {
+      fillTex = await Assets.load('/images/Loading-bar1.png');
+    } catch {}
+    if (fillTex) {
+      const fillFullW = this.barDisplayW - this.fillInsetX * 2;
+      const fillFullH = this.barDisplayH - this.fillInsetY * 2;
+      this.loadingBarFillSprite = new Sprite(fillTex);
+      this.loadingBarFillSprite.width = fillFullW;
+      this.loadingBarFillSprite.height = fillFullH;
+      this.loadingBarFillSprite.position.set(
+        barCenterX - this.barDisplayW / 2 + this.fillInsetX,
+        barCenterY - this.barDisplayH / 2 + this.fillInsetY
+      );
+      this.addChild(this.loadingBarFillSprite);
+
+      // 마스크 — progress에 따라 너비 늘어남
+      this.loadingBarFillMask = new Graphics();
+      this.loadingBarFillMask.position.set(
+        barCenterX - this.barDisplayW / 2 + this.fillInsetX,
+        barCenterY - this.barDisplayH / 2 + this.fillInsetY
+      );
+      this.addChild(this.loadingBarFillMask);
+      this.loadingBarFillSprite.mask = this.loadingBarFillMask;
+    }
 
     // PLAY 버튼 (처음엔 hidden — 로딩 완료 후 등장)
     await this.setupPlayButton(barCenterX, barCenterY);
@@ -203,26 +224,16 @@ export class TitleScreen extends Container {
   }
 
   private redrawLoadingFill(): void {
-    if (!this.loadingBarFill) return;
-    this.loadingBarFill.clear();
-    const fillW = (this.barDisplayW - this.fillInsetX * 2) * this.loadingProgress;
-    const fillH = this.barDisplayH - this.fillInsetY * 2;
-    if (fillW <= 0) return;
-
-    // 베이스 — 노란색 세로 그라데이션 (위 밝음 → 아래 어두움)
-    const grad = new FillGradient(0, 0, 0, fillH);
-    grad.addColorStop(0, 0xfff0a0);   // 밝은 노랑 (top highlight)
-    grad.addColorStop(0.35, 0xffd060); // 노랑
-    grad.addColorStop(0.7, 0xf2a020);  // 진한 amber
-    grad.addColorStop(1, 0xc07000);    // 어두운 그림자 (bottom)
-    this.loadingBarFill
-      .roundRect(0, 0, fillW, fillH, fillH / 2)
-      .fill(grad);
-
-    // 상단 하이라이트 (광택)
-    this.loadingBarFill
-      .roundRect(4, 3, Math.max(0, fillW - 8), fillH * 0.4, fillH * 0.3)
-      .fill({ color: 0xffffff, alpha: 0.45 });
+    if (!this.loadingBarFillMask) return;
+    const fillFullW = this.barDisplayW - this.fillInsetX * 2;
+    const fillFullH = this.barDisplayH - this.fillInsetY * 2;
+    const visibleW = fillFullW * this.loadingProgress;
+    this.loadingBarFillMask.clear();
+    if (visibleW > 0) {
+      this.loadingBarFillMask
+        .rect(0, 0, visibleW, fillFullH)
+        .fill({ color: 0xffffff });
+    }
   }
 
   private showPlayButton(): void {
@@ -234,7 +245,7 @@ export class TitleScreen extends Container {
       const t = Math.min((performance.now() - startTime) / fadeMs, 1);
       // 로딩바·텍스트 fade out
       if (this.loadingBarSprite) this.loadingBarSprite.alpha = 1 - t;
-      if (this.loadingBarFill) this.loadingBarFill.alpha = 1 - t;
+      if (this.loadingBarFillSprite) this.loadingBarFillSprite.alpha = 1 - t;
       if (this.loadingTxtSprite) this.loadingTxtSprite.alpha = 1 - t;
       // PLAY 버튼 fade in
       if (this.btnContainer) this.btnContainer.alpha = t;
@@ -242,7 +253,7 @@ export class TitleScreen extends Container {
       else {
         // 로딩바 요소 완전 제거
         if (this.loadingBarSprite) this.loadingBarSprite.visible = false;
-        if (this.loadingBarFill) this.loadingBarFill.visible = false;
+        if (this.loadingBarFillSprite) this.loadingBarFillSprite.visible = false;
         if (this.loadingTxtSprite) this.loadingTxtSprite.visible = false;
       }
     };
