@@ -574,13 +574,13 @@ export class SplitScene extends Container {
       this.sceneBackground = new Sprite(messyTex);
       (this.sceneBackground as Sprite).width = SCENE_AREA_WIDTH;
       (this.sceneBackground as Sprite).height = GAME_HEIGHT;
-      this.sceneContainer.addChildAt(this.sceneBackground, 1);
+      this.sceneContainer.addChildAt(this.sceneBackground, 0);
     } else {
       // 플레이스홀더 배경 (어두운 네이비)
       this.sceneBackground = new Graphics()
         .rect(0, 0, SCENE_AREA_WIDTH, GAME_HEIGHT)
         .fill({ color: COLORS.LV1_NAVY });
-      this.sceneContainer.addChildAt(this.sceneBackground, 1);
+      this.sceneContainer.addChildAt(this.sceneBackground, 0);
     }
   }
 
