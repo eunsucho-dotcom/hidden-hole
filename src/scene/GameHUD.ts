@@ -231,23 +231,38 @@ export class GameHUD extends Container {
       // 잠금 PNG (fallback 🔒)
       const lockFallback = new Text({
         text: '🔒',
-        style: { fontSize: 48 },
+        style: { fontSize: 44 },
       });
       lockFallback.anchor.set(0.5);
-      lockFallback.position.set(60, 50);
+      lockFallback.position.set(60, 42);
       c.addChild(lockFallback);
       Assets.load('/images/icon_lock.png').then((tex: Texture) => {
         c.removeChild(lockFallback);
         lockFallback.destroy();
         const lockSprite = new Sprite(tex);
         lockSprite.anchor.set(0.5);
-        const SIZE = 70;
+        const SIZE = 60;
         const scale = SIZE / Math.max(tex.width, tex.height);
         lockSprite.width = tex.width * scale;
         lockSprite.height = tex.height * scale;
-        lockSprite.position.set(60, 50);
+        lockSprite.position.set(60, 42);
         c.addChild(lockSprite);
       }).catch(() => {});
+      // 잠금 해제 조건 표시 (예: "5장 클리어")
+      const conditions = ['5장 클리어', '제한시간 내\n10장 클리어'];
+      const condIdx = slotIndex ?? 0;
+      const conditionText = new Text({
+        text: conditions[condIdx] || '',
+        style: {
+          fontSize: 12,
+          fill: 0xffd966,
+          fontWeight: 'bold',
+          align: 'center',
+        },
+      });
+      conditionText.anchor.set(0.5);
+      conditionText.position.set(60, 80);
+      c.addChild(conditionText);
     } else {
       const icon = new Text({
         text: emoji,
