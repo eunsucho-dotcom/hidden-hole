@@ -67,13 +67,15 @@ export class GameHUD extends Container {
     // 점수 아이콘 — 숫자 좌측에 위치 (점수가 길어져도 아이콘은 고정)
     this.loadHudIcon('/images/hud_score.png', 58, 45, '🪙', GAME_WIDTH - 330);
 
-    // 스킬 슬롯 (우하단)
-    this.skill1Slot = this.createSkillSlot('🌀', '오기 발동', 'LOCKED');
+    // 스킬 슬롯 (우하단) — 현재 비활성 (visible=false). 필요 시 true로 변경
+    this.skill1Slot = this.createSkillSlot('🌀', '오기 발동', 'LOCKED', 0);
     this.skill1Slot.position.set(GAME_WIDTH - 280, 920);
+    this.skill1Slot.visible = false;
     this.addChild(this.skill1Slot);
 
-    this.skill2Slot = this.createSkillSlot('🧨', '즉시 클리어', 'LOCKED');
+    this.skill2Slot = this.createSkillSlot('🧨', '즉시 클리어', 'LOCKED', 1);
     this.skill2Slot.position.set(GAME_WIDTH - 140, 920);
+    this.skill2Slot.visible = false;
     this.addChild(this.skill2Slot);
 
     // 사운드 토글 (코인 패널과 같은 Y, 1.3배 크게)

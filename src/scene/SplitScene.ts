@@ -700,21 +700,10 @@ export class SplitScene extends Container {
   private skill1Armed = false; // 즉시 클리어 ARM 상태
 
   /**
-   * 카테고리 흡입 완료 후 호출 — 스킬 잠금 해제 체크
+   * 스킬 잠금 해제 체크 — 현재 스킬 UI 비활성화 상태라 no-op
    */
   private maybeUnlockSkills(): void {
-    const cleared = this.suckedCategories.size;
-    if (!this.skill0Used && cleared >= SKILLS.EOK_UNLOCK_ROUNDS) {
-      this.hud.updateSkillStatus(0, 'READY');
-    }
-    // 즉시 클리어: 10장 + 제한시간(timeLimit) 내에 도달했을 때만
-    if (!this.skill1Used && !this.skill1Armed && cleared >= SKILLS.CLEAR_UNLOCK_ROUNDS) {
-      const elapsedSec = (performance.now() - this.startTime) / 1000;
-      const timeLimit = this.sceneData.timeLimit ?? 120;
-      if (elapsedSec <= timeLimit) {
-        this.hud.updateSkillStatus(1, 'READY');
-      }
-    }
+    /* 스킬 슬롯이 visible=false라서 unlock 호출 불필요 */
   }
 
   /**
