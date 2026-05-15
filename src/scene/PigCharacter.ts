@@ -53,27 +53,38 @@ export class PigCharacter extends Container {
     } catch {}
     if (!sheet) return;
 
-    // 26 프레임 추출
+    // 26 프레임 추출 — 행마다 측정된 y 좌표 사용 (균일 pitch 아님)
+    // 이미지 분석 결과: 각 행의 콘텐츠가 시작하는 y 좌표
     const FRAME_W = 400;
-    const FRAME_H = 482;
+    const FRAME_H = 430; // 모든 행 콘텐츠 높이(399~429) 커버
+    const INSET = 4; // 좌우 픽셀 bleed 방지
+    const ROW_STARTS = [44, 541, 1032, 1532, 2026, 2474];
+    const sheetH = sheet.height;
     const frames: Texture[] = [];
     for (let row = 0; row < 6; row++) {
       const colsThisRow = row === 5 ? 1 : 5;
+      const rowY = ROW_STARTS[row];
+      const h = Math.min(FRAME_H, sheetH - rowY);
       for (let col = 0; col < colsThisRow; col++) {
         frames.push(new Texture({
           source: sheet.source,
-          frame: new Rectangle(col * FRAME_W, row * FRAME_H, FRAME_W, FRAME_H),
+          frame: new Rectangle(
+            col * FRAME_W + INSET,
+            rowY,
+            FRAME_W - 2 * INSET,
+            h,
+          ),
         }));
       }
     }
 
     this.animSprite = new AnimatedSprite(frames);
     this.animSprite.anchor.set(0.5);
-    // 비율 유지 — pigSize를 짧은 변 기준
+    // 비율 유지 — pigSize 기준
     const scale = this.pigSize / Math.max(FRAME_W, FRAME_H);
     this.animSprite.width = FRAME_W * scale;
     this.animSprite.height = FRAME_H * scale;
-    this.animSprite.animationSpeed = 0.12; // ~7fps at 60fps render
+    this.animSprite.animationSpeed = 0.28; // ~17fps at 60fps render (더 부드러움)
     this.animSprite.loop = true;
     this.animSprite.play();
 
@@ -89,7 +100,7 @@ export class PigCharacter extends Container {
   openMouth(): void {
     if (this.animSprite) {
       // 애니메이션 속도 빨라짐 (먹는 느낌)
-      this.animSprite.animationSpeed = 0.25;
+      this.animSprite.animationSpeed = 0.5;
     }
     this.animateScale(1.1, 200);
   }
@@ -100,7 +111,7 @@ export class PigCharacter extends Container {
   closeMouth(): void {
     this.animateScale(0.95, 100, () => {
       if (this.animSprite) {
-        this.animSprite.animationSpeed = 0.12;
+        this.animSprite.animationSpeed = 0.28;
       }
       this.animateScale(1.0, 200);
     });
