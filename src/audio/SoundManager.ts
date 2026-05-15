@@ -119,6 +119,10 @@ export function initializeSounds(): void {
   audio.register('bgm_lofi', '/sounds/bgm_lofi.mp3', { loop: true });
   audio.register('bgm_jazz', '/sounds/bgm_jazz.mp3', { loop: true });
   audio.register('bgm_ambient', '/sounds/bgm_ambient.mp3', { loop: true });
+  // 후보 3종 — 본인이 듣고 마음에 드는 거 선택
+  audio.register('bgm_option1', '/sounds/bgm_option1.mp3', { loop: true });
+  audio.register('bgm_option2', '/sounds/bgm_option2.mp3', { loop: true });
+  audio.register('bgm_option3', '/sounds/bgm_option3.mp3', { loop: true });
 
   // 클릭 SFX (사물별 다양) — ASMR 강조를 위해 볼륨 최대치
   audio.register('click_paper', '/sounds/sfx_click_paper.mp3', { volume: 1.0 });
