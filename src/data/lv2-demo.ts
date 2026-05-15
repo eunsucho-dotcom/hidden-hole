@@ -209,8 +209,9 @@ export const LV2_DEMO: SceneData = {
   interactiveObjects: [],
   timeLimit: 120,
   pig: {
-    position: { x: 425, y: 788 },
+    position: { x: 425, y: 758 },
     size: 200,
   },
-  contentShiftX: -120,
+  // 패널 폭 240으로 넓어진 만큼 추가 좌측 보정 (-120 → -180)
+  contentShiftX: -180,
 };

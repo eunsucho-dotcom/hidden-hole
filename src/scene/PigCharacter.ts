@@ -53,46 +53,33 @@ export class PigCharacter extends Container {
     } catch {}
     if (!sheet) return;
 
-    // 26 프레임 추출 — 각 (row, col) 정확한 bbox 측정값 사용
-    // (스프라이트시트가 균일 그리드가 아니라 행/열마다 픽셀 위치 다름)
-    const ROW_STARTS = [44, 541, 1032, 1532, 2026, 2474];
-    const FRAME_H = 430;
-    // [row][col] = { x, w } : 각 프레임의 좌상단 x + 폭
-    const FRAMES_DATA: Array<Array<{ x: number; w: number }>> = [
-      // Row 0
-      [{ x: 22, w: 364 }, { x: 422, w: 368 }, { x: 834, w: 371 }, { x: 1223, w: 375 }, { x: 1604, w: 382 }],
-      // Row 1
-      [{ x: 25, w: 381 }, { x: 414, w: 372 }, { x: 838, w: 356 }, { x: 1240, w: 350 }, { x: 1604, w: 354 }],
-      // Row 2
-      [{ x: 38, w: 360 }, { x: 412, w: 376 }, { x: 810, w: 381 }, { x: 1199, w: 382 }, { x: 1605, w: 383 }],
-      // Row 3
-      [{ x: 61, w: 382 }, { x: 449, w: 381 }, { x: 843, w: 373 }, { x: 1231, w: 369 }, { x: 1621, w: 366 }],
-      // Row 4
-      [{ x: 50, w: 367 }, { x: 442, w: 367 }, { x: 817, w: 367 }, { x: 1208, w: 369 }, { x: 1597, w: 370 }],
-      // Row 5 (1 프레임)
-      [{ x: 26, w: 364 }],
+    // 7 프레임 가로 1행 스프라이트시트
+    // frame 0: 닫힘, frame 4: 가장 크게 벌림 (peak), frame 6: 닫힘
+    const ROW_Y = 113;
+    const ROW_H = 418;
+    const FRAMES_DATA: Array<{ x: number; w: number }> = [
+      { x: 143,  w: 364 }, // 0
+      { x: 642,  w: 368 }, // 1
+      { x: 1162, w: 371 }, // 2
+      { x: 1661, w: 375 }, // 3
+      { x: 2161, w: 382 }, // 4 (peak open)
+      { x: 2660, w: 381 }, // 5
+      { x: 3164, w: 364 }, // 6 (close)
     ];
-    const sheetH = sheet.height;
     const frames: Texture[] = [];
-    for (let row = 0; row < FRAMES_DATA.length; row++) {
-      const rowY = ROW_STARTS[row];
-      const h = Math.min(FRAME_H, sheetH - rowY);
-      for (const cell of FRAMES_DATA[row]) {
-        frames.push(new Texture({
-          source: sheet.source,
-          frame: new Rectangle(cell.x, rowY, cell.w, h),
-        }));
-      }
+    for (const cell of FRAMES_DATA) {
+      frames.push(new Texture({
+        source: sheet.source,
+        frame: new Rectangle(cell.x, ROW_Y, cell.w, ROW_H),
+      }));
     }
 
     this.animSprite = new AnimatedSprite(frames);
     this.animSprite.anchor.set(0.5);
-    // 모든 프레임이 동일한 표시 크기로 — pigSize 정사각형
     this.animSprite.width = this.pigSize;
     this.animSprite.height = this.pigSize;
-    this.animSprite.animationSpeed = 0.15; // 평상시 느린 루프 (살랑살랑)
-    this.animSprite.loop = true;
-    this.animSprite.play();
+    // 평상시 frame 0 (닫힘)에서 정지. 흡입 시에만 애니메이션
+    this.animSprite.gotoAndStop(0);
 
     // 플레이스홀더 제거하고 애니메이션 스프라이트로 교체
     this.removeChild(this.placeholder);
@@ -101,37 +88,35 @@ export class PigCharacter extends Container {
   }
 
   /**
-   * 입 벌림 (흡입 시작) — 프레임 0→12(가장 크게 벌림)로 천천히 이동 후 정지
-   * 흡입되는 사물들이 입에 들어가는 동안 입은 활짝 벌린 상태 유지
+   * 입 벌림 (흡입 시작) — 프레임 0→4(peak open)로 빠르게 이동 후 정지
+   * 흡입 사물 들어가는 동안 입 활짝 벌린 상태 유지 (frame 4)
    */
   openMouth(): void {
     if (!this.animSprite) return;
     this.animSprite.stop();
-    this.animSprite.loop = false;
     this.animateScale(1.1, 200);
-    // 600ms에 걸쳐 입 벌리는 모션 → 프레임 12에서 정지
-    this.playToFrame(12, 600);
+    // 빠른 입 벌리기: 250ms (frame 0 → 4)
+    this.playToFrame(4, 250);
   }
 
   /**
-   * 입 닫음 (흡입 끝) — 현재 프레임 → 25(닫힘)로 빠르게 + 꿀꺽 효과
+   * 입 닫음 (흡입 끝) — 한번에 확 닫음 (snap)
    */
   closeMouth(): void {
     if (!this.animSprite) return;
-    this.animateScale(0.95, 100, () => {
-      this.animateScale(1.0, 200);
-    });
-    // 입 닫는 모션 (꿀꺽) 350ms 후 idle 루프 재개
-    this.playToFrame(25, 350, () => {
-      if (this.animSprite) {
-        this.animSprite.loop = true;
-        this.animSprite.animationSpeed = 0.15;
-        this.animSprite.gotoAndPlay(0);
-      }
+    // 꿀꺽 효과 + 즉시 닫힘 프레임으로 스냅
+    this.animateScale(0.92, 80, () => this.animateScale(1.0, 150));
+    if (this.frameAnimRaf !== undefined) cancelAnimationFrame(this.frameAnimRaf);
+    // 한번에 확 — 80ms에 4→6 (마지막 닫힘 프레임)
+    this.playToFrame(6, 80, () => {
+      // 80ms 뒤 frame 0으로 복귀 (idle 정지 상태)
+      setTimeout(() => {
+        if (this.animSprite) this.animSprite.gotoAndStop(0);
+      }, 80);
     });
   }
 
-  /** 프레임을 from→target까지 duration ms에 걸쳐 보간하며 재생 후 stop */
+  /** 프레임 from→target까지 duration ms에 걸쳐 보간 재생 후 stop */
   private frameAnimRaf?: number;
   private playToFrame(target: number, duration: number, onComplete?: () => void): void {
     if (this.frameAnimRaf !== undefined) cancelAnimationFrame(this.frameAnimRaf);
@@ -142,8 +127,8 @@ export class PigCharacter extends Container {
       if (!this.animSprite) return;
       const elapsed = performance.now() - startTime;
       const t = Math.min(elapsed / duration, 1);
-      // easeInOutQuad — 시작·끝 부드럽게
-      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      // easeOutQuad — 시작 빠르고 끝에서 부드럽게 정지
+      const eased = 1 - (1 - t) * (1 - t);
       const frame = Math.round(start + (target - start) * eased);
       this.animSprite.gotoAndStop(frame);
       if (t < 1) {

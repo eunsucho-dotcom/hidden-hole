@@ -249,7 +249,9 @@ export const LV1_DEMO: SceneData = {
   ],
   timeLimit: 120,
   pig: {
-    position: { x: 425, y: 786 },
+    position: { x: 425, y: 756 },
     size: 200,
   },
+  // 패널 폭 240으로 넓어진 만큼 좌측 시프트 보정
+  contentShiftX: -60,
 };
