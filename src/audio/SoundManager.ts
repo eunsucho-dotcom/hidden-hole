@@ -21,11 +21,12 @@ export class SoundManager {
    * @param key 식별자 (예: 'click_paper', 'blackhole_main')
    * @param src 파일 경로 (예: '/sounds/sfx_click_paper.mp3')
    */
-  register(key: string, src: string, options: { volume?: number; loop?: boolean } = {}): void {
+  register(key: string, src: string, options: { volume?: number; loop?: boolean; rate?: number } = {}): void {
     const sound = new Howl({
       src: [src],
       volume: options.volume ?? 1.0,
       loop: options.loop ?? false,
+      rate: options.rate ?? 1.0,
       preload: true,
       onloaderror: (_id, err) => {
         console.warn(`[Sound] 로드 실패: ${key} (${src}) - 파일이 아직 없을 수 있음. 무시하고 진행.`, err);
@@ -118,7 +119,7 @@ export function initializeSounds(): void {
   // 3종 BGM 옵션 — main.ts에서 마음에 드는 키로 audio.playBgm() 호출하면 됨
   audio.register('bgm_lofi', '/sounds/bgm_lofi.mp3', { loop: true });
   audio.register('bgm_jazz', '/sounds/bgm_jazz.mp3', { loop: true });
-  audio.register('bgm_ambient', '/sounds/bgm_ambient.mp3', { loop: true });
+  audio.register('bgm_ambient', '/sounds/bgm_ambient.mp3', { loop: true, rate: 0.5 });
   // 후보 3종 — 본인이 듣고 마음에 드는 거 선택
   audio.register('bgm_option1', '/sounds/bgm_option1.mp3', { loop: true });
   audio.register('bgm_option2', '/sounds/bgm_option2.mp3', { loop: true });
