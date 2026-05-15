@@ -87,19 +87,9 @@ export class SplitScene extends Container {
     // 카테고리 데이터 보관 (숨은 카테고리 동적 추가용)
     this.allCategoryInfos = new Map(categories.map((c) => [c.category, c]));
 
-    // 인터랙티브가 reveal할 숨은 카테고리에 대해 처음부터 ? 미스터리 슬롯 표시
-    // (인터랙티브는 처음부터 클릭 가능 — 순서 무관, 어디에 뭐가 있는지 힌트)
-    for (const obj of sceneData.interactiveObjects) {
-      for (const trashId of obj.revealsTrashIds) {
-        const hiddenTrash = sceneData.trashItems.find((t) => t.id === trashId);
-        if (hiddenTrash) {
-          this.leftPanel.addMysterySlot(hiddenTrash.category);
-        }
-      }
-    }
-    this.hintsShown = true;
-    // ? 슬롯이 맨 아래에 추가되며 자동 스크롤됐으니, 다시 active 카테고리(맨 위)로 스크롤
-    this.leftPanel.scrollToActive();
+    // 초기엔 mystery 슬롯 추가 안 함.
+    // 모든 보이는 카테고리 깨면 첫 인터랙티브 unlock + mystery 슬롯 1개 노출,
+    // 그 카테고리 흡입 완료되면 다음 인터랙티브로 순차 진행.
 
     // 씬 wrapper (좌측 패널 옆에 위치) — 마스크 + 노란 배경 fill
     const sceneWrapper = new Container();
@@ -649,10 +639,7 @@ export class SplitScene extends Container {
 
     const justCompleted = this.leftPanel.incrementCategory(trash.data.category);
     if (justCompleted) {
-      // ASMR 클릭 사운드 먼저 들리도록 350ms 딜레이 후 체크 사운드 재생
-      // (좌측 패널 슬롯이 'complete' 상태로 전환되며 체크마크 등장하는 타이밍과 맞춤)
-      setTimeout(() => audio.play('category_complete'), 350);
-      // 카테고리 완료 시각 차감 후 미니 흡입 발동 (사용자가 "✓ 3/3" 잠시 본 후)
+      // 카테고리 완료 — 흡입 사운드(blackhole_start)가 이미 충분히 신호 역할
       setTimeout(() => this.suckCategory(trash.data.category), 600);
     }
   }
@@ -684,6 +671,14 @@ export class SplitScene extends Container {
       this.pig?.closeMouth();
       this.maybeUnlockSkills();
 
+      // 이번에 흡입된 카테고리가 숨김(인터랙티브로 reveal됨) → 다음 인터랙티브 unlock
+      const wasHiddenCategory = this.trashSprites.some(
+        (t) => t.data.category === category && t.data.isHidden
+      );
+      if (wasHiddenCategory) {
+        setTimeout(() => this.unlockNextInteractive(), 400);
+      }
+
       // 다음 카테고리 ACTIVE 전환
       const nextCat = this.leftPanel.activateNext();
       if (nextCat) {
@@ -692,8 +687,7 @@ export class SplitScene extends Container {
         if (this.suckedCategories.size === this.totalCategories) {
           setTimeout(() => this.finalWrapUp(), 500);
         } else {
-          // 보이는 카테고리 다 끝났지만 숨은 카테고리(frame/ring) 남음
-          // → 인터랙티브에 ? 힌트 표시
+          // 보이는 카테고리 다 끝남 → 첫 인터랙티브 unlock + mystery 슬롯 노출
           this.showInteractiveHints();
         }
       }
@@ -755,12 +749,37 @@ export class SplitScene extends Container {
   }
 
   /**
-   * (구) 보이는 카테고리 다 끝났을 때 ? 슬롯 표시 트리거
-   * → 이제 처음부터 ? 슬롯이 표시되므로 no-op (호환성 위해 유지)
+   * 순차적 인터랙티브 unlock — 보이는 카테고리 다 끝났을 때 첫 번째 호출
    */
   private hintsShown = false;
+  private currentInteractiveIdx = -1;
+
   private showInteractiveHints(): void {
-    /* no-op: 초기화 시점에 이미 ? 슬롯 추가됨 */
+    if (this.hintsShown) return;
+    this.hintsShown = true;
+    // 첫 인터랙티브 unlock
+    this.unlockNextInteractive();
+  }
+
+  /**
+   * 다음 인터랙티브 unlock + 해당 mystery 슬롯 노출
+   */
+  private unlockNextInteractive(): void {
+    this.currentInteractiveIdx++;
+    if (this.currentInteractiveIdx >= this.interactiveSprites.length) return;
+    const sprite = this.interactiveSprites[this.currentInteractiveIdx];
+    if (!sprite || sprite.data.isInteracted) {
+      this.unlockNextInteractive();
+      return;
+    }
+    sprite.unlock();
+    // mystery 슬롯 추가 (해당 인터랙티브가 reveal할 카테고리)
+    for (const trashId of sprite.data.revealsTrashIds) {
+      const hiddenTrash = this.sceneData.trashItems.find((t) => t.id === trashId);
+      if (hiddenTrash) {
+        this.leftPanel.addMysterySlot(hiddenTrash.category);
+      }
+    }
   }
 
   /**

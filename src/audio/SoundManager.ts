@@ -49,11 +49,13 @@ export class SoundManager {
   }
 
   /**
-   * BGM 재생 (이전 BGM 자동 정지)
+   * BGM 재생 (이전 BGM 자동 정지) — idempotent (이미 같은 BGM 재생 중이면 무시)
    */
   playBgm(key: string, fadeMs: number = 1000): void {
     const sound = this.sounds.get(key);
     if (!sound) return;
+    // 이미 같은 BGM이 재생 중이면 skip
+    if (this.bgmCurrent === sound && sound.playing()) return;
 
     if (this.bgmCurrent && this.bgmCurrent !== sound) {
       this.bgmCurrent.fade(this.bgmCurrent.volume(), 0, fadeMs);
@@ -132,6 +134,7 @@ export function initializeSounds(): void {
   audio.register('click_paper_towel', '/sounds/sfx_click_paper_towel.mp3', { volume: 1.0 });
   audio.register('click_crumple', '/sounds/sfx_click_crumple.mp3', { volume: 1.0 });
   audio.register('category_complete', '/sounds/sfx_category_complete.mp3', { volume: 1.0 });
+  audio.register('pig_open', '/sounds/sfx_pig_open.mp3', { volume: 0.9 });
 
   // 인터랙션 SFX — ASMR 강조를 위해 볼륨 최대치
   audio.register('drag_start', '/sounds/sfx_drag_start.mp3', { volume: 1.0 });

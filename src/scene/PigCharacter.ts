@@ -1,4 +1,5 @@
 import { Container, Graphics, AnimatedSprite, Text, Texture, Rectangle, Assets } from 'pixi.js';
+import { audio } from '../audio/SoundManager';
 
 /**
  * 시그니처 캐릭터 — 돼지인형 (스프라이트시트 애니메이션)
@@ -95,6 +96,7 @@ export class PigCharacter extends Container {
     if (!this.animSprite) return;
     this.animSprite.stop();
     this.animateScale(1.1, 200);
+    audio.play('pig_open');
     // 빠른 입 벌리기: 250ms (frame 0 → 4)
     this.playToFrame(4, 250);
   }

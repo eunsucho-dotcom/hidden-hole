@@ -70,10 +70,10 @@ export class InteractiveSprite extends Container {
     this.addChild(this.spriteBefore as Container);
     this.addChild(this.spriteAfter as Container);
 
-    // 인터랙션 설정 — 처음부터 클릭 가능 (쓰레기와 순서 무관)
-    this.eventMode = 'static';
-    this.cursor = 'pointer';
-    this.locked = false;
+    // 인터랙션 설정 — 초기엔 잠금 (모든 visible 카테고리 깬 후 순차적 unlock)
+    this.eventMode = 'none';
+    this.cursor = 'default';
+    this.locked = true;
     this.setupInteraction();
 
     // 편집 모드용 핸들러 (E 키 누르면 활성화)

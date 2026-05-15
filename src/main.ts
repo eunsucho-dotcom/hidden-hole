@@ -59,6 +59,14 @@ class Game {
     }
   }
 
+  /**
+   * 현재 레벨 ID 기반으로 다음 레벨 SceneData 반환 (없으면 null)
+   */
+  private getNextLevel(currentId: string): SceneData | null {
+    if (currentId === 'lv1') return LV2_DEMO;
+    return null;
+  }
+
   showTitle(): void {
     this.clearScene();
     const title = new TitleScreen();
@@ -80,14 +88,17 @@ class Game {
 
   showLevel(data: SceneData): void {
     this.clearScene();
+    // BGM 시작 (사용자가 게임 진입한 후, 브라우저 autoplay 허용됨)
+    audio.playBgm('bgm_lofi');
     // 데이터 깊은 복제 — 상태 초기화로 재시작 시에도 정상 작동
     const freshData = freshSceneData(data);
     const scene = new SplitScene(freshData);
     scene.onComplete((result) => {
       // 결과 화면을 게임 위에 오버레이로 띄움
       const resultScreen = new ResultScreen(result);
-      // 재시작: 같은 레벨 다시
-      resultScreen.onRetry(() => this.showLevel(data));
+      // 재시작 버튼 → 다음 레벨이 있으면 그쪽으로, 없으면 같은 레벨 재시작
+      const nextLevel = this.getNextLevel(data.id);
+      resultScreen.onRetry(() => this.showLevel(nextLevel ?? data));
       resultScreen.onHome(() => this.showTitle());
       this.root.addChild(resultScreen);
     });
