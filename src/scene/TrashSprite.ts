@@ -2,6 +2,7 @@ import { Container, Graphics, Sprite, Texture, FederatedPointerEvent } from 'pix
 import { ACTIVATION } from '../primitives/constants';
 import { GlowEffect } from '../effects/GlowEffect';
 import { audio, getClickSoundKey } from '../audio/SoundManager';
+import { vibrate } from '../primitives/haptic';
 import type { TrashItem } from '../primitives/types';
 
 /**
@@ -103,6 +104,8 @@ export class TrashSprite extends Container {
 
     // 사운드 (사물 종류별 자동 선택)
     audio.play(getClickSoundKey(this.data.id));
+    // 모바일 햅틱 — 짧은 진동 (사물 클릭 피드백)
+    vibrate(25);
 
     // 점프 + 글로우
     this.glow.show();

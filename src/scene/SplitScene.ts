@@ -10,6 +10,7 @@ import {
   SKILLS,
 } from '../primitives/constants';
 import { TrashSprite } from './TrashSprite';
+import { vibratePattern } from '../primitives/haptic';
 import { InteractiveSprite } from './InteractiveSprite';
 import { LeftPanel, type CategoryInfo } from './LeftPanel';
 import { GameHUD } from './GameHUD';
@@ -672,6 +673,8 @@ export class SplitScene extends Container {
       this.suckedCategories.add(category);
       this.pig?.closeMouth();
       this.maybeUnlockSkills();
+      // 카테고리 클리어 햅틱 — 짧고 강한 펄스 (만족감)
+      vibratePattern([15, 50, 30]);
 
       // 이번에 흡입된 카테고리가 숨김(인터랙티브로 reveal됨) → 다음 인터랙티브 unlock
       const wasHiddenCategory = this.trashSprites.some(

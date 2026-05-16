@@ -66,76 +66,66 @@ export class BlackHoleEffect extends Container {
     };
     holeAnimate();
 
-    // 시작 각도/거리 — 스파이럴 경로 계산용
-    const spiralStates = targetStates.map((state) => {
-      const dx = state.startX - this.targetX;
-      const dy = state.startY - this.targetY;
-      return {
-        ...state,
-        startAngle: Math.atan2(dy, dx),
-        startDist: Math.hypot(dx, dy),
-        // 항목마다 다른 스핀 방향/속도 (다양성)
-        spinDir: Math.random() < 0.5 ? -1 : 1,
-        spinSpeed: 8 + Math.random() * 4,   // 4~6바퀴
-        tumbleSpeedX: 0.012 + Math.random() * 0.008,
-        tumbleSpeedY: 0.014 + Math.random() * 0.008,
-      };
-    });
+    // 항목마다 살짝 다른 호버 위로 떠오르는 양 (다양성)
+    const liftStates = targetStates.map((state) => ({
+      ...state,
+      liftY: 18 + Math.random() * 18,           // 위로 부유 18~36px
+      tinyRotation: (Math.random() - 0.5) * 0.5, // 호버 중 살짝 흔들림
+    }));
 
-    // 흡입 애니메이션 메인 루프 — 3D 느낌 (스파이럴 + 텀블 + 강한 스케일 다운)
+    // 흡입 애니메이션 — 2단계
+    // Phase 1 (0~25%): 호버 — 살짝 위로 떠오르고 1.15배로 커짐 (카메라로 다가오는 느낌)
+    // Phase 2 (25~100%): 강력한 흡입 — 직선 가속 + 급격한 스케일 다운 (깊이감)
     const animate = () => {
       const elapsed = performance.now() - startTime;
       let allDone = true;
 
-      for (const state of spiralStates) {
+      for (const state of liftStates) {
         const localElapsed = elapsed - state.delay;
         if (localElapsed < 0) {
           allDone = false;
           continue;
         }
-        const duration = 1300;
+        const duration = 1100;
         const t = Math.min(localElapsed / duration, 1);
         if (t < 1) allDone = false;
 
-        // easeInCubic 가속 — 처음 천천히, 끝에 빨려들어감
-        const eased = this.easeInCubic(t);
-
-        // 스파이럴 — 거리 줄면서 각도 증가 (소용돌이)
-        const currentDist = state.startDist * (1 - eased);
-        const angle = state.startAngle + eased * Math.PI * 3 * state.spinDir;
-        state.sprite.x = this.targetX + Math.cos(angle) * currentDist;
-        state.sprite.y = this.targetY + Math.sin(angle) * currentDist;
-
-        // 3D 깊이감 — 강하게 작아짐 (0~0.05)
-        // 처음에 살짝 커지는 느낌(1.0→1.08) 주고, 그 후 0.05까지 수축
         let scaleFactor: number;
-        if (eased < 0.15) {
-          scaleFactor = 1 + (eased / 0.15) * 0.08; // 1 → 1.08
+        let posT: number;
+        let extraY = 0;
+        let rotMul = 0;
+
+        if (t < 0.25) {
+          // Phase 1 — 호버 / 카메라로 다가오기
+          const pT = t / 0.25;
+          // easeOutCubic — 살짝 위로 올라옴
+          const eased = 1 - Math.pow(1 - pT, 3);
+          scaleFactor = 1 + eased * 0.15;     // 1 → 1.15
+          extraY = -state.liftY * eased;
+          posT = 0;                            // 위치는 아직 시작점
+          rotMul = state.tinyRotation * eased; // 미세 흔들림
         } else {
-          const shrinkT = (eased - 0.15) / 0.85;
-          scaleFactor = 1.08 * (1 - shrinkT * 0.95); // 1.08 → 0.054
+          // Phase 2 — 빨려들어감 (직선 가속 + 강한 스케일 다운)
+          const sT = (t - 0.25) / 0.75;
+          // easeInExpo — 천천히 시작해서 끝에 폭발적 가속
+          const sEased = sT === 0 ? 0 : Math.pow(2, 10 * sT - 10);
+          posT = sEased;
+          // 스케일: 1.15 → 0.04 (강한 깊이감)
+          scaleFactor = 1.15 * (1 - sEased * 0.97);
+          extraY = -state.liftY * (1 - sEased); // 위로 올라간 만큼 다시 내려옴
+          rotMul = state.tinyRotation + sEased * Math.PI * 1.2; // 1바퀴 미만 회전
         }
+
+        state.sprite.x = state.startX + (this.targetX - state.startX) * posT;
+        state.sprite.y = state.startY + (this.targetY - state.startY) * posT + extraY;
         state.sprite.scale.set(state.startScale * scaleFactor);
+        state.sprite.rotation = state.startRotation + rotMul;
 
-        // 자체 회전 — 다회전 (3D 스핀)
-        state.sprite.rotation =
-          state.startRotation + eased * Math.PI * state.spinSpeed * state.spinDir;
-
-        // 텀블 효과 — skew 사인파로 3D 회전 시뮬레이션
-        // 시간에 따라 진폭 증가 (가까울수록 더 격렬한 텀블)
-        const tumbleAmp = 0.35 + eased * 0.45;
-        // Sprite 만 skew 가능 (Container 는 없음). Sprite 인스턴스 체크 후 적용
-        const anySprite = state.sprite as unknown as { skew?: { x: number; y: number } };
-        if (anySprite.skew) {
-          anySprite.skew.x = Math.sin(elapsed * state.tumbleSpeedX) * tumbleAmp;
-          anySprite.skew.y = Math.cos(elapsed * state.tumbleSpeedY) * tumbleAmp;
-        }
-
-        // 알파 — 끝 12% 만 페이드 (블랙홀 안으로 사라지는 느낌)
-        if (eased < 0.88) {
+        // 알파 — 끝 10% 만 페이드
+        if (t < 0.9) {
           state.sprite.alpha = 1;
         } else {
-          state.sprite.alpha = Math.max(0, 1 - (eased - 0.88) / 0.12);
+          state.sprite.alpha = Math.max(0, 1 - (t - 0.9) / 0.1);
         }
       }
 
