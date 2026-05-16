@@ -80,11 +80,11 @@ export class ResultScreen extends Container {
       audio.play('button');
       this.onHomeCallback?.();
     });
-    // NEXT — 패널 오른쪽 하단 옆 (패널 바깥)
-    this.renderButton('▶', './images/next_button.png', 1510, 830, () => {
+    // NEXT — 패널 아래 가운데 (패널 바깥)
+    this.renderButton('▶', './images/next_button.png', GAME_WIDTH / 2, 920, () => {
       audio.play('button');
       this.onNextCallback?.();
-    }, 220);
+    }, 200);
 
     // 등장 애니메이션
     this.alpha = 0;
