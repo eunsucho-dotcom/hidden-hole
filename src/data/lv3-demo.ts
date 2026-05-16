@@ -28,176 +28,178 @@ interface CategorySpec {
 const CATEGORIES: CategorySpec[] = [
   { category: 'ball', label: 'ball', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 856, y: 1025, w: 153, h: 150, z: 53 },
-      { x: 763, y: 507, w: 106, h: 104, z: 16, r: 0.30 },
+      { x: 856, y: 1025, w: 153, h: 150, z: 49 },
+      { x: 763, y: 507, w: 106, h: 104, z: 14, r: 0.30 },
     ] },
 
   { category: 'barbie doll', label: 'barbie doll', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 682, y: 300, w: 99, h: 108, z: 68 },
-      { x: 1367, y: 407, w: 110, h: 120, z: 67 },
+      { x: 682, y: 300, w: 99, h: 108, z: 63 },
+      { x: 1367, y: 407, w: 110, h: 120, z: 62 },
     ] },
 
   { category: 'bear', label: 'bear', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 1267, y: 536, w: 120, h: 139, z: 13 },
-      { x: 443, y: 325, w: 76, h: 88, z: 66 },
+      { x: 1267, y: 536, w: 120, h: 139, z: 11 },
+      { x: 443, y: 325, w: 76, h: 88, z: 61 },
     ] },
 
   { category: 'block frame', label: 'block frame', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 1024, y: 683, w: 105, h: 120, z: 54 },
-      { x: 405, y: 879, w: 104, h: 119, z: 58 },
+      { x: 1024, y: 683, w: 105, h: 120, z: 50 },
+      { x: 405, y: 879, w: 104, h: 119, z: 53 },
     ] },
 
   { category: 'book', label: 'book', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 336, y: 853, w: 92, h: 92, z: 57, r: 0.50 },
-      { x: 1014, y: 1007, w: 112, h: 112, z: 56, r: 0.50 },
+      { x: 336, y: 853, w: 92, h: 92, z: 52, r: 0.50 },
+      { x: 1014, y: 1007, w: 112, h: 112, z: 51, r: 0.50 },
     ] },
 
   { category: 'crayon', label: 'crayon', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 505, y: 772, w: 56, h: 65, z: 7 },
-      { x: 1069, y: 936, w: 64, h: 75, z: 11 },
-      { x: 1004, y: 554, w: 45, h: 52, z: 1, r: -1.40 },
-      { x: 136, y: 724, w: 33, h: 38, z: 8, r: -1.40 },
+      { x: 505, y: 772, w: 56, h: 65, z: 6 },
+      { x: 1069, y: 936, w: 64, h: 75, z: 9 },
+      { x: 1004, y: 554, w: 45, h: 52, z: 0, r: -1.40 },
+      { x: 141, y: 736, w: 41, h: 48, z: 69, r: -1.40 },
     ] },
 
   { category: 'cube', label: 'cube', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 289, y: 437, w: 50, h: 46, z: 64 },
-      { x: 574, y: 566, w: 50, h: 46, z: 62 },
-      { x: 1124, y: 584, w: 50, h: 46, z: 65 },
+      { x: 289, y: 437, w: 50, h: 46, z: 59 },
+      { x: 574, y: 566, w: 50, h: 46, z: 57 },
+      { x: 1124, y: 584, w: 50, h: 46, z: 60 },
     ] },
 
   { category: 'dinosaur', label: 'dinosaur', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 875, y: 475, w: 139, h: 138, z: 2 },
-      { x: 193, y: 727, w: 102, h: 101, z: 20, r: 1.00 },
+      { x: 875, y: 475, w: 139, h: 138, z: 1 },
+      { x: 205, y: 737, w: 102, h: 101, z: 70, r: 1.00 },
     ] },
 
   { category: 'doy ring', label: 'doy ring', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 987, y: 597, w: 80, h: 120, z: 14 },
-      { x: 600, y: 604, w: 65, h: 98, z: 63 },
-      { x: 308, y: 356, w: 53, h: 80, z: 15 },
+      { x: 987, y: 597, w: 80, h: 120, z: 12 },
+      { x: 600, y: 604, w: 65, h: 98, z: 58 },
+      { x: 308, y: 356, w: 53, h: 80, z: 13 },
     ] },
 
   { category: 'drum', label: 'drum', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 1313, y: 605, w: 116, h: 120, z: 55 },
-      { x: 637, y: 999, w: 127, h: 132, z: 36 },
-      { x: 834, y: 549, w: 103, h: 107, z: 45 },
+      { x: 1259, y: 578, w: 110, h: 114, z: 65 },
+      { x: 637, y: 999, w: 127, h: 132, z: 33 },
+      { x: 834, y: 549, w: 103, h: 107, z: 41 },
     ] },
 
   { category: 'duck', label: 'duck', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 350, y: 560, w: 112, h: 120, z: 0 },
+      { x: 345, y: 420, w: 78, h: 84, z: 66 },
+      { x: 815, y: 123, w: 60, h: 65, z: 67 },
+      { x: 1079, y: 857, w: 77, h: 83, z: 68 },
     ] },
 
   { category: 'excavator', label: 'excavator', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 628, y: 701, w: 169, h: 158, z: 69, r: -0.10 },
+      { x: 628, y: 701, w: 169, h: 158, z: 64, r: -0.10 },
     ] },
 
   { category: 'green candy', label: 'green candy', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 892, y: 552, w: 48, h: 19, z: 32 },
-      { x: 869, y: 222, w: 48, h: 19, z: 12 },
-      { x: 1523, y: 657, w: 48, h: 19, z: 60 },
-      { x: 763, y: 595, w: 48, h: 19, z: 46 },
-      { x: 1041, y: 826, w: 48, h: 19, z: 34 },
-      { x: 1323, y: 335, w: 44, h: 17, z: 35 },
-      { x: 781, y: 813, w: 48, h: 19, z: 47 },
-      { x: 397, y: 427, w: 48, h: 19, z: 61 },
+      { x: 892, y: 552, w: 48, h: 19, z: 29 },
+      { x: 869, y: 222, w: 48, h: 19, z: 10 },
+      { x: 1523, y: 657, w: 48, h: 19, z: 55 },
+      { x: 763, y: 595, w: 48, h: 19, z: 42 },
+      { x: 1041, y: 826, w: 48, h: 19, z: 31 },
+      { x: 1323, y: 335, w: 44, h: 17, z: 32 },
+      { x: 781, y: 813, w: 48, h: 19, z: 43 },
+      { x: 397, y: 427, w: 48, h: 19, z: 56 },
     ] },
 
   { category: 'keyboard', label: 'keyboard', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 1062, y: 648, w: 126, h: 107, z: 51 },
-      { x: 316, y: 758, w: 139, h: 118, z: 43 },
+      { x: 1062, y: 648, w: 126, h: 107, z: 47 },
+      { x: 316, y: 758, w: 139, h: 118, z: 71 },
     ] },
 
   { category: 'lego', label: 'lego', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 1105, y: 754, w: 83, h: 84, z: 37 },
-      { x: 773, y: 924, w: 83, h: 84, z: 40 },
-      { x: 389, y: 722, w: 78, h: 79, z: 41 },
-      { x: 510, y: 936, w: 81, h: 82, z: 42 },
-      { x: 803, y: 954, w: 83, h: 84, z: 44 },
+      { x: 1105, y: 754, w: 83, h: 84, z: 34 },
+      { x: 773, y: 924, w: 83, h: 84, z: 37 },
+      { x: 389, y: 722, w: 78, h: 79, z: 38 },
+      { x: 510, y: 936, w: 81, h: 82, z: 39 },
+      { x: 803, y: 954, w: 83, h: 84, z: 40 },
     ] },
 
   { category: 'lollipop', label: 'lollipop', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 115, y: 331, w: 33, h: 68, z: 30, r: 0.70 },
-      { x: 1366, y: 806, w: 55, h: 113, z: 5, r: -1.20 },
-      { x: 430, y: 799, w: 45, h: 93, z: 6, r: 0.70 },
+      { x: 115, y: 331, w: 33, h: 68, z: 27, r: 0.70 },
+      { x: 1366, y: 806, w: 55, h: 113, z: 4, r: -1.20 },
+      { x: 430, y: 799, w: 45, h: 93, z: 5, r: 0.70 },
     ] },
 
   { category: 'long lego', label: 'long lego', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 718, y: 977, w: 112, h: 92, z: 26, r: -0.10 },
-      { x: 1233, y: 765, w: 90, h: 74, z: 9 },
+      { x: 718, y: 977, w: 112, h: 92, z: 23, r: -0.10 },
+      { x: 1233, y: 765, w: 90, h: 74, z: 7 },
     ] },
 
   { category: 'pencel', label: 'pencel', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 1008, y: 762, w: 93, h: 54, z: 21, r: 0.20 },
-      { x: 536, y: 843, w: 93, h: 54, z: 22, r: 0.20 },
-      { x: 1149, y: 936, w: 103, h: 59, z: 23, r: 0.20 },
-      { x: 871, y: 931, w: 93, h: 54, z: 52, r: 0.20 },
+      { x: 1008, y: 762, w: 93, h: 54, z: 18, r: 0.20 },
+      { x: 536, y: 843, w: 93, h: 54, z: 19, r: 0.20 },
+      { x: 1149, y: 936, w: 103, h: 59, z: 20, r: 0.20 },
+      { x: 871, y: 931, w: 93, h: 54, z: 48, r: 0.20 },
     ] },
 
   { category: 'pink candy', label: 'pink candy', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 469, y: 875, w: 72, h: 28, z: 31 },
-      { x: 983, y: 920, w: 80, h: 31, z: 28 },
-      { x: 921, y: 563, w: 56, h: 22, z: 33 },
-      { x: 146, y: 348, w: 46, h: 18, z: 29 },
-      { x: 567, y: 489, w: 42, h: 16, z: 49 },
+      { x: 469, y: 875, w: 72, h: 28, z: 28 },
+      { x: 983, y: 920, w: 80, h: 31, z: 25 },
+      { x: 921, y: 563, w: 56, h: 22, z: 30 },
+      { x: 146, y: 348, w: 46, h: 18, z: 26 },
+      { x: 567, y: 489, w: 42, h: 16, z: 45 },
     ] },
 
   { category: 'rabit', label: 'rabit', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 521, y: 675, w: 80, h: 126, z: 24 },
-      { x: 1420, y: 738, w: 88, h: 139, z: 25 },
-      { x: 703, y: 553, w: 65, h: 102, z: 27, r: 1.10 },
+      { x: 521, y: 675, w: 80, h: 126, z: 21 },
+      { x: 1420, y: 738, w: 88, h: 139, z: 22 },
+      { x: 703, y: 553, w: 65, h: 102, z: 24, r: 1.10 },
     ] },
 
   { category: 'remocontroller', label: 'remocontroller', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 444, y: 422, w: 34, h: 67, z: 3, r: -1.30 },
-      { x: 934, y: 979, w: 59, h: 116, z: 10, r: -1.30 },
+      { x: 444, y: 422, w: 34, h: 67, z: 2, r: -1.30 },
+      { x: 934, y: 979, w: 59, h: 116, z: 8, r: -1.30 },
     ] },
 
   { category: 'robot', label: 'robot', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 628, y: 837, w: 64, h: 120, z: 17 },
-      { x: 275, y: 691, w: 64, h: 120, z: 19 },
-      { x: 950, y: 502, w: 64, h: 120, z: 18 },
+      { x: 628, y: 837, w: 64, h: 120, z: 15 },
+      { x: 275, y: 691, w: 64, h: 120, z: 17 },
+      { x: 950, y: 502, w: 64, h: 120, z: 16 },
     ] },
 
   { category: 'shoes', label: 'shoes', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 941, y: 841, w: 120, h: 104, z: 48 },
-      { x: 822, y: 361, w: 68, h: 59, z: 50 },
+      { x: 941, y: 841, w: 120, h: 104, z: 44 },
+      { x: 822, y: 361, w: 68, h: 59, z: 46 },
     ] },
 
   { category: 'train', label: 'train', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 1152, y: 822, w: 120, h: 111, z: 38 },
+      { x: 1152, y: 822, w: 120, h: 111, z: 35 },
     ] },
 
   { category: 'truck', label: 'truck', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 1243, y: 859, w: 139, h: 121, z: 39 },
-      { x: 464, y: 657, w: 113, h: 98, z: 4 },
+      { x: 1243, y: 859, w: 139, h: 121, z: 36 },
+      { x: 464, y: 657, w: 113, h: 98, z: 3 },
     ] },
 
   { category: 'xylophone', label: 'xylophone', emoji: '🧸', defaultSize: { w: 120, h: 120 },
     instances: [
-      { x: 711, y: 835, w: 111, h: 126, z: 59 },
+      { x: 711, y: 835, w: 111, h: 126, z: 54 },
     ] },
 ];
 
