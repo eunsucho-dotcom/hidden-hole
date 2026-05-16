@@ -71,19 +71,20 @@ export class ResultScreen extends Container {
     totalScore.position.set(GAME_WIDTH / 2, 625);
     this.addChild(totalScore);
 
-    // 버튼 3개 — 하단 일렬 (Retry 왼쪽 / NEXT 가운데 / Home 오른쪽)
-    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 250, 760, () => {
+    // Retry / Home — 원래 위치 (패널 안쪽 가운데)
+    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 130, 750, () => {
       audio.play('button');
       this.onRetryCallback?.();
-    }, 100);
-    this.renderButton('▶', './images/next_button.png', GAME_WIDTH / 2, 760, () => {
+    });
+    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 130, 750, () => {
+      audio.play('button');
+      this.onHomeCallback?.();
+    });
+    // NEXT — 패널 오른쪽 하단 옆 (패널 바깥)
+    this.renderButton('▶', './images/next_button.png', 1510, 830, () => {
       audio.play('button');
       this.onNextCallback?.();
     }, 220);
-    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 250, 760, () => {
-      audio.play('button');
-      this.onHomeCallback?.();
-    }, 100);
 
     // 등장 애니메이션
     this.alpha = 0;
