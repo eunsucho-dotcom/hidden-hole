@@ -12,7 +12,9 @@ import { audio } from '../audio/SoundManager';
  */
 export class TitleScreen extends Container {
   private onPlayCallback?: () => void;
-  // 배경 (항상 보임)
+  // 스플래시 배경 (로딩 중) — splash_bg.png
+  private splashBgSprite?: Sprite;
+  // 타이틀 배경 (로딩 끝 후) — logo_bg.png
   private bgSprite?: Sprite;
   // 타이틀 로고 텍스트 (pop-in)
   private titleContainer: Container;
@@ -67,7 +69,24 @@ export class TitleScreen extends Container {
   }
 
   private async loadAssets(): Promise<void> {
-    // 1. 배경 PNG (logo_bg.png) — 풀스크린 cover, 항상 보임
+    // 1-a. 스플래시 배경 (splash_bg.png) — 로딩 중에 보임, 로딩 끝나면 fade out
+    let splashTex: Texture | undefined;
+    try {
+      splashTex = await Assets.load('./images/splash_bg.png');
+    } catch {}
+    if (splashTex) {
+      this.splashBgSprite = new Sprite(splashTex);
+      this.splashBgSprite.anchor.set(0.5);
+      const sScaleX = GAME_WIDTH / splashTex.width;
+      const sScaleY = GAME_HEIGHT / splashTex.height;
+      const sScale = Math.max(sScaleX, sScaleY);
+      this.splashBgSprite.width = splashTex.width * sScale;
+      this.splashBgSprite.height = splashTex.height * sScale;
+      this.splashBgSprite.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+      this.addChildAt(this.splashBgSprite, 1);
+    }
+
+    // 1-b. 타이틀 배경 (logo_bg.png) — 로딩 끝난 후 fade in
     let bgTex: Texture | undefined;
     try {
       bgTex = await Assets.load('./images/logo_bg.png');
@@ -81,8 +100,9 @@ export class TitleScreen extends Container {
       this.bgSprite.width = bgTex.width * scale;
       this.bgSprite.height = bgTex.height * scale;
       this.bgSprite.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
-      // 단색 fallback bg 위에, 다른 요소들 아래에
-      this.addChildAt(this.bgSprite, 1);
+      this.bgSprite.alpha = 0; // 초기엔 숨김 — 로딩 끝나면 fade in
+      // splash 위, 다른 요소 아래
+      this.addChildAt(this.bgSprite, 2);
     }
 
     // 2. 타이틀 로고 (title.png) — Hidden Hole 텍스트
@@ -269,8 +289,9 @@ export class TitleScreen extends Container {
   }
 
   private showPlayButton(): void {
-    // 1. 로딩바·텍스트 fade out
+    // 1. 로딩바·텍스트 fade out + 스플래시 → 타이틀 배경 cross-fade
     this.fadeOutLoadingBar();
+    this.crossFadeBackgrounds();
     // 2. Staggered pop-in (180ms 간격) — 타이틀 → 돼지 → PLAY 버튼
     setTimeout(() => this.popIn(this.titleContainer), 120);
     setTimeout(() => this.popIn(this.titlePigContainer), 300);
@@ -280,6 +301,22 @@ export class TitleScreen extends Container {
         this.popIn(this.btnContainer);
       }
     }, 480);
+  }
+
+  /** splash_bg → logo_bg cross-fade */
+  private crossFadeBackgrounds(): void {
+    const startTime = performance.now();
+    const fadeMs = 500;
+    const animate = () => {
+      const t = Math.min((performance.now() - startTime) / fadeMs, 1);
+      if (this.splashBgSprite) this.splashBgSprite.alpha = 1 - t;
+      if (this.bgSprite) this.bgSprite.alpha = t;
+      if (t < 1) requestAnimationFrame(animate);
+      else if (this.splashBgSprite) {
+        this.splashBgSprite.visible = false;
+      }
+    };
+    animate();
   }
 
   private fadeOutLoadingBar(): void {
