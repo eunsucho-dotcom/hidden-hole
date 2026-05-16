@@ -1,0 +1,11 @@
+{
+  "appName": "Hidden Hole",
+  "packageName": "com.bagelcode.hiddenhole",
+  "gameDir": "dist",
+  "orientation": "landscape",
+  "icon": "public/images/app_icon.png",
+  "minSdk": 24,
+  "targetSdk": 35,
+  "versionCode": 1,
+  "versionName": "1.0.0"
+}
