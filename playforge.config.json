@@ -1,6 +1,6 @@
 {
   "appName": "Hidden Hole",
-  "packageName": "com.bagelcode.hiddenhole",
+  "packageName": "com.sugarscone.hiddenhole",
   "gameDir": "dist",
   "orientation": "landscape",
   "icon": "public/images/app_icon.png",

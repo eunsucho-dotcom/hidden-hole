@@ -1,6 +1,13 @@
 node_modules/
 dist/
+dist-apk/
+android/
 .vite/
 *.log
 .DS_Store
 Thumbs.db
+# playforge 빌드 임시 파일
+playforge-game.zip
+_make_zip.py
+_find_korean.py
+_korean_strings.txt
