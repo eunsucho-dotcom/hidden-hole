@@ -44,12 +44,11 @@ export class LeftPanel extends Container {
   private slots = new Map<string, CategorySlot>();
   private orderedCategories: string[] = [];
   private slotsContainer: Container;
-  private header: Text;
-  private subHeader: Text;
   private backgroundPanel: Graphics;
   private scrollMask: Graphics;
   private scrollY = 0;
   private maxScrollY = 0;
+  private viewportHeight = 0;
   private onCategoryActivatedCallback?: (category: string) => void;
 
   constructor(allCategories: CategoryInfo[]) {
@@ -61,43 +60,20 @@ export class LeftPanel extends Container {
       .fill({ color: 0xefb63a });
     this.addChild(this.backgroundPanel);
 
-    // 헤더 (타이머 바 아래) — 노란 배경 위에 진한 다크 텍스트
-    this.header = new Text({
-      text: 'FIND ALL',
-      style: {
-        fontSize: 20,
-        fill: 0x3d2a14,
-        fontWeight: 'normal',
-        fontFamily: FONT_FAMILY,
-        stroke: { color: 0xffffff, width: 1 },
-      },
-    });
-    this.header.anchor.set(0.5, 0);
-    this.header.position.set(LEFT_PANEL_WIDTH / 2, 82);
-    this.addChild(this.header);
-
-    this.subHeader = new Text({
-      text: '',
-      style: {
-        fontSize: 18,
-        fill: 0x5a3e1c,
-        fontWeight: 'normal',
-        fontFamily: FONT_FAMILY,
-      },
-    });
-    this.subHeader.anchor.set(0.5, 0);
-    this.subHeader.position.set(LEFT_PANEL_WIDTH / 2, 105);
-    this.addChild(this.subHeader);
-
     // 슬롯 컨테이너 (스크롤됨)
     this.slotsContainer = new Container();
     // 30px 우측 이동 (panel 폭 240 확보로 1.2x active 슬롯도 잘림 없음)
     this.slotsContainer.position.set(30, PANEL_SCROLL_TOP);
     this.addChild(this.slotsContainer);
 
-    // 슬롯 영역 마스크 (스크롤 시 위/아래로 흘러나가지 않게)
+    // 슬롯 영역 마스크 — 잘려서 반만 보이는 슬롯이 없도록 정수 슬롯만큼만 표시
+    // viewport = SLOT_TOP_PADDING + N * slotRow - GAP + 1.2x active 슬롯 여유(16px)
+    const slotRow = ITEM_SLOT_SIZE + ITEM_SLOT_GAP;
+    const available = GAME_HEIGHT - PANEL_SCROLL_TOP - SLOT_TOP_PADDING + ITEM_SLOT_GAP;
+    const fullSlotsVisible = Math.floor(available / slotRow);
+    this.viewportHeight = SLOT_TOP_PADDING + fullSlotsVisible * slotRow - ITEM_SLOT_GAP + 16;
     this.scrollMask = new Graphics()
-      .rect(0, PANEL_SCROLL_TOP, LEFT_PANEL_WIDTH, GAME_HEIGHT - PANEL_SCROLL_TOP)
+      .rect(0, PANEL_SCROLL_TOP, LEFT_PANEL_WIDTH, this.viewportHeight)
       .fill({ color: 0xffffff });
     this.addChild(this.scrollMask);
     this.slotsContainer.mask = this.scrollMask;
@@ -117,7 +93,6 @@ export class LeftPanel extends Container {
       this.addSlot(cat);
     }
 
-    this.updateSubHeader();
     this.updateMaxScroll();
     this.activateNext();
   }
@@ -138,15 +113,17 @@ export class LeftPanel extends Container {
   }
 
   private updateMaxScroll(): void {
-    const contentHeight = SLOT_TOP_PADDING + this.orderedCategories.length * (ITEM_SLOT_SIZE + ITEM_SLOT_GAP);
-    const viewportHeight = GAME_HEIGHT - PANEL_SCROLL_TOP;
-    this.maxScrollY = Math.max(0, contentHeight - viewportHeight);
+    const slotRow = ITEM_SLOT_SIZE + ITEM_SLOT_GAP;
+    const contentHeight = SLOT_TOP_PADDING + this.orderedCategories.length * slotRow;
+    this.maxScrollY = Math.max(0, contentHeight - this.viewportHeight);
   }
 
   private handleWheel(e: FederatedWheelEvent): void {
-    // 위로 스크롤 = 콘텐츠 아래로 (deltaY 양수 = 휠 아래)
-    const delta = e.deltaY;
-    this.scrollY = Math.max(0, Math.min(this.maxScrollY, this.scrollY + delta));
+    // 슬롯 단위 스냅 — 휠 1틱당 1개 슬롯씩 이동 (잘림 방지)
+    const slotRow = ITEM_SLOT_SIZE + ITEM_SLOT_GAP;
+    const direction = e.deltaY > 0 ? 1 : -1;
+    const target = Math.round(this.scrollY / slotRow) + direction;
+    this.scrollY = Math.max(0, Math.min(this.maxScrollY, target * slotRow));
     this.slotsContainer.y = PANEL_SCROLL_TOP - this.scrollY;
     e.preventDefault?.();
   }
@@ -165,7 +142,6 @@ export class LeftPanel extends Container {
     if (existing) return;
 
     this.addSlot(info);
-    this.updateSubHeader();
     this.updateMaxScroll();
 
     const slot = this.slots.get(info.category)!;
@@ -205,7 +181,6 @@ export class LeftPanel extends Container {
     this.slots.set(categoryId, slot);
     this.orderedCategories.push(categoryId);
 
-    this.updateSubHeader();
     this.updateMaxScroll();
 
     // 새 ? 슬롯이 화면에 보이도록 자동 스크롤
@@ -255,11 +230,18 @@ export class LeftPanel extends Container {
    * 활성 슬롯이 뷰포트에 보이도록 자동 스크롤
    */
   private scrollToSlot(slot: CategorySlot): void {
-    // pivot center 기준이므로 slot.y는 중심. 상단 좌표는 -SIZE/2
+    // 슬롯 단위 스냅으로 스크롤 — 잘림 방지
+    const slotRow = ITEM_SLOT_SIZE + ITEM_SLOT_GAP;
     const slotTopY = slot.y - ITEM_SLOT_SIZE / 2;
-    const viewportHeight = GAME_HEIGHT - PANEL_SCROLL_TOP;
-    const targetScroll = Math.max(0, Math.min(this.maxScrollY, slotTopY - viewportHeight * 0.2));
-    this.animateScrollTo(targetScroll);
+    // 화면 안에 이미 보이면 스크롤 안 함
+    const visibleStart = this.scrollY + SLOT_TOP_PADDING;
+    const visibleEnd = this.scrollY + this.viewportHeight - 16;
+    if (slotTopY >= visibleStart && slotTopY + ITEM_SLOT_SIZE <= visibleEnd) return;
+    // 슬롯 단위로 스냅된 스크롤 위치 계산
+    const desired = slotTopY - SLOT_TOP_PADDING;
+    const snapped = Math.round(desired / slotRow) * slotRow;
+    const target = Math.max(0, Math.min(this.maxScrollY, snapped));
+    this.animateScrollTo(target);
   }
 
   private animateScrollTo(target: number): void {
@@ -306,10 +288,6 @@ export class LeftPanel extends Container {
     this.onCategoryActivatedCallback = cb;
   }
 
-  private updateSubHeader(): void {
-    const total = this.orderedCategories.length;
-    this.subHeader.text = `${total} ${total === 1 ? 'CATEGORY' : 'CATEGORIES'}`;
-  }
 }
 
 /**
