@@ -79,10 +79,11 @@ export class LeftPanel extends Container {
     this.addChild(this.scrollMask);
     this.slotsContainer.mask = this.scrollMask;
 
-    // 마우스 휠 스크롤
+    // 마우스 휠 스크롤 + 터치 드래그 스크롤
     this.eventMode = 'static';
     this.on('wheel', this.handleWheel, this);
-    // hitArea로 패널 영역에서만 휠 캐치
+    this.setupTouchScroll();
+    // hitArea로 패널 영역에서만 휠/터치 캐치
     this.hitArea = {
       contains: (x: number, y: number) =>
         x >= 0 && x <= LEFT_PANEL_WIDTH && y >= 0 && y <= GAME_HEIGHT,
@@ -127,6 +128,39 @@ export class LeftPanel extends Container {
     this.scrollY = Math.max(0, Math.min(this.maxScrollY, target * slotRow));
     this.slotsContainer.y = PANEL_SCROLL_TOP - this.scrollY;
     e.preventDefault?.();
+  }
+
+  /** 터치/마우스 드래그 스크롤 — 모바일 대응 */
+  private setupTouchScroll(): void {
+    let dragging = false;
+    let dragStartY = 0;
+    let scrollStartY = 0;
+
+    this.on('pointerdown', (e) => {
+      // 슬롯 클릭이면 스크롤 시작 안 함 (slot 의 click 처리 우선)
+      dragging = true;
+      dragStartY = e.global.y;
+      scrollStartY = this.scrollY;
+    });
+
+    this.on('globalpointermove', (e) => {
+      if (!dragging) return;
+      const deltaY = dragStartY - e.global.y;
+      this.scrollY = Math.max(0, Math.min(this.maxScrollY, scrollStartY + deltaY));
+      this.slotsContainer.y = PANEL_SCROLL_TOP - this.scrollY;
+    });
+
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      // 슬롯 단위로 스냅
+      const slotRow = ITEM_SLOT_SIZE + ITEM_SLOT_GAP;
+      const snapped = Math.round(this.scrollY / slotRow) * slotRow;
+      const target = Math.max(0, Math.min(this.maxScrollY, snapped));
+      this.animateScrollTo(target);
+    };
+    this.on('pointerup', endDrag);
+    this.on('pointerupoutside', endDrag);
   }
 
   /**

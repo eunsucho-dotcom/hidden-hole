@@ -73,6 +73,8 @@ class Game {
 
   showTitle(): void {
     this.clearScene();
+    // 타이틀은 logo_bg 가 초록계열 → 풀스크린 대응 위해 비슷한 톤
+    document.body.style.backgroundColor = '#2a8c4a';
     const title = new TitleScreen();
     title.onPlay(() => this.showLevel(LV1_DEMO));
     this.root.addChild(title);
@@ -124,6 +126,9 @@ class Game {
     this.clearScene();
     // BGM 시작 (사용자가 게임 진입한 후, 브라우저 autoplay 허용됨)
     audio.playBgm('bgm_ambient');
+    // 풀스크린 대응 — body 배경을 씬 가장자리 색으로 매칭 (좌우 검은 띠 없앰)
+    const bgColor = data.bgEdgeColor ?? 0xefb63a;
+    document.body.style.backgroundColor = '#' + bgColor.toString(16).padStart(6, '0');
     // 데이터 깊은 복제 — 상태 초기화로 재시작 시에도 정상 작동
     const freshData = freshSceneData(data);
     const scene = new SplitScene(freshData);
