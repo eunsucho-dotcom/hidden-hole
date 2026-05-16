@@ -123,18 +123,26 @@ export class ResultScreen extends Container {
     // PNG 자산 로드 (실패 시 이모지 fallback)
     let filledTex: Texture | undefined;
     let emptyTex: Texture | undefined;
+    let bigFilledTex: Texture | undefined; // 가운데 별 전용 (크게)
     try {
       filledTex = await Assets.load('./images/star_filled.png');
     } catch {}
     try {
       emptyTex = await Assets.load('./images/star_empty.png');
     } catch {}
+    try {
+      bigFilledTex = await Assets.load('./images/star_big.png');
+    } catch {}
 
     starConfigs.forEach((cfg, i) => {
       const isFilled = i < stars;
+      const isCenter = i === 1;
       let star: Sprite | Text;
 
-      const tex = isFilled ? filledTex : emptyTex;
+      // 가운데 채워진 별 = bigFilledTex 우선 (없으면 filledTex), 그 외 = filledTex/emptyTex
+      const tex = isFilled
+        ? (isCenter && bigFilledTex ? bigFilledTex : filledTex)
+        : emptyTex;
       if (tex) {
         star = new Sprite(tex);
         star.anchor.set(0.5);
@@ -251,10 +259,9 @@ export class ResultScreen extends Container {
     return btn;
   }
 
-  /** popup_bg 우상단 모서리에 X 닫기 버튼 — 클릭 시 home 동작 */
+  /** popup_bg 우상단 모서리에 X 닫기 버튼 — 클릭 시 home, 드래그로 위치 조정 */
   private renderCloseButton(): void {
     // 패널: 표시 900×879, 중앙 (960, 460), 우상단 모서리 (1410, 20)
-    // X 버튼은 모서리에 살짝 걸치게 (반쯤 밖)
     const btn = new Container();
     btn.position.set(1410, 35);
     const SIZE = 90;
@@ -268,7 +275,6 @@ export class ResultScreen extends Container {
         btn.addChild(sprite);
       })
       .catch(() => {
-        // fallback ❌
         const fallback = new Text({
           text: '❌',
           style: { fontSize: 56 },
@@ -278,11 +284,51 @@ export class ResultScreen extends Container {
       });
     btn.eventMode = 'static';
     btn.cursor = 'pointer';
-    btn.on('pointerover', () => btn.scale.set(1.12));
-    btn.on('pointerout', () => btn.scale.set(1));
+
+    // 드래그 상태
+    let isDragging = false;
+    let dragMoved = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    btn.on('pointerdown', (e) => {
+      isDragging = true;
+      dragMoved = false;
+      const pos = e.getLocalPosition(this);
+      dragOffsetX = btn.x - pos.x;
+      dragOffsetY = btn.y - pos.y;
+      btn.cursor = 'grabbing';
+    });
+    btn.on('globalpointermove', (e) => {
+      if (!isDragging) return;
+      dragMoved = true;
+      const pos = e.getLocalPosition(this);
+      btn.position.set(Math.round(pos.x + dragOffsetX), Math.round(pos.y + dragOffsetY));
+    });
+    const endDrag = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      btn.cursor = 'pointer';
+      if (dragMoved) {
+        const coords = `X 위치: (${Math.round(btn.x)}, ${Math.round(btn.y)})`;
+        console.log(`%c📍 ${coords}`, 'color:#ff9f68;font-weight:bold;font-size:14px');
+        try {
+          navigator.clipboard?.writeText(`btn.position.set(${Math.round(btn.x)}, ${Math.round(btn.y)});`);
+        } catch {}
+      }
+    };
+    btn.on('pointerup', endDrag);
+    btn.on('pointerupoutside', endDrag);
+
+    btn.on('pointerover', () => {
+      if (!isDragging) btn.scale.set(1.12);
+    });
+    btn.on('pointerout', () => {
+      if (!isDragging) btn.scale.set(1);
+    });
     btn.on('pointertap', () => {
+      if (dragMoved) return; // 드래그였으면 닫기 무시
       audio.play('button');
-      // X = 닫기 → home 동작 (타이틀로 복귀)
       this.onHomeCallback?.();
     });
     this.addChild(btn);
