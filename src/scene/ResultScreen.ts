@@ -17,75 +17,77 @@ export class ResultScreen extends Container {
     // 반투명 다크 오버레이
     const overlay = new Graphics()
       .rect(0, 0, GAME_WIDTH, GAME_HEIGHT)
-      .fill({ color: 0x000000, alpha: 0.75 });
+      .fill({ color: 0x000000, alpha: 0.7 });
     this.addChild(overlay);
 
-    // 결과 패널
-    const panel = new Graphics()
-      .roundRect(GAME_WIDTH / 2 - 500, GAME_HEIGHT / 2 - 350, 1000, 700, 30)
+    // 결과 패널 PNG (popup_bg.png — 나무 카드 + 별 3개 장식)
+    // 네이티브 634×619, 표시 900×879, 중앙 (960, 540)
+    const panelFallback = new Graphics()
+      .roundRect(GAME_WIDTH / 2 - 450, GAME_HEIGHT / 2 - 440, 900, 879, 30)
       .fill({ color: COLORS.CREAM_WHITE })
       .stroke({ color: COLORS.SUNSET_ORANGE, width: 6 });
-    this.addChild(panel);
+    this.addChild(panelFallback);
+    Assets.load('./images/popup_bg.png').then((tex: Texture) => {
+      this.removeChild(panelFallback);
+      panelFallback.destroy();
+      const panel = new Sprite(tex);
+      panel.anchor.set(0.5);
+      const DISPLAY_W = 900;
+      const scale = DISPLAY_W / tex.width;
+      panel.width = tex.width * scale;
+      panel.height = tex.height * scale;
+      panel.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+      this.addChildAt(panel, 1); // overlay 위, 컨텐츠 아래
+    }).catch(() => {});
 
-    // 타이틀
-    const title = new Text({
-      text: `🎉 Stage Clear!`,
-      style: {
-        fontSize: 64,
-        fill: COLORS.DARK_CHARCOAL,
-        fontWeight: 'bold',
-      },
-    });
-    title.anchor.set(0.5);
-    title.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 280);
-    this.addChild(title);
-
-    // 씬 이름
+    // 씬 이름 — 상단(별 아래)
     const sceneName = new Text({
       text: tBilingual(result.sceneTitle),
       style: {
-        fontSize: 32,
-        fill: 0x666666,
+        fontSize: 38,
+        fill: 0x6b4a2b,
+        fontWeight: 'bold',
         fontStyle: 'italic',
       },
     });
     sceneName.anchor.set(0.5);
-    sceneName.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 210);
+    sceneName.position.set(GAME_WIDTH / 2, 520);
     this.addChild(sceneName);
 
-    // 별점 표시 (3개 별)
+    // 별점 — popup_bg 의 별 자리에 오버레이로 실제 점수 표현
     this.renderStars(result.stars);
 
     // 점수 상세
     this.renderScoreBreakdown(result);
 
-    // 총점
+    // 총점 라벨
     const totalLabel = new Text({
       text: t('result.total_score'),
-      style: { fontSize: 24, fill: 0x888888, fontWeight: 'bold' },
+      style: { fontSize: 26, fill: 0x8a6a4a, fontWeight: 'bold' },
     });
     totalLabel.anchor.set(0.5);
-    totalLabel.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 130);
+    totalLabel.position.set(GAME_WIDTH / 2, 770);
     this.addChild(totalLabel);
 
     const totalScore = new Text({
       text: `${result.totalScore}`,
       style: {
-        fontSize: 80,
+        fontSize: 72,
         fill: COLORS.SUNSET_ORANGE,
         fontWeight: 'bold',
+        stroke: { color: 0x6b4a2b, width: 3 },
       },
     });
     totalScore.anchor.set(0.5);
-    totalScore.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 190);
+    totalScore.position.set(GAME_WIDTH / 2, 835);
     this.addChild(totalScore);
 
-    // 버튼 2개 (PNG 아이콘)
-    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 130, GAME_HEIGHT / 2 + 250, () => {
+    // 버튼 2개 — 패널 아래 (정리감)
+    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 130, GAME_HEIGHT - 70, () => {
       audio.play('button');
       this.onRetryCallback?.();
     });
-    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 130, GAME_HEIGHT / 2 + 250, () => {
+    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 130, GAME_HEIGHT - 70, () => {
       audio.play('button');
       this.onHomeCallback?.();
     });
@@ -103,11 +105,12 @@ export class ResultScreen extends Container {
   }
 
   private async renderStars(stars: number): Promise<void> {
-    const STAR_SIZE = 140;
+    // popup_bg.png 의 별 위치에 맞춰 오버레이 (네이티브 위치 → 1.42x scale + 중심 정렬)
+    const STAR_SIZE = 130;
     const starPositions = [
-      { x: GAME_WIDTH / 2 - 150, y: GAME_HEIGHT / 2 - 100 },
-      { x: GAME_WIDTH / 2, y: GAME_HEIGHT / 2 - 110 },
-      { x: GAME_WIDTH / 2 + 150, y: GAME_HEIGHT / 2 - 100 },
+      { x: GAME_WIDTH / 2 - 170, y: 410 },
+      { x: GAME_WIDTH / 2,        y: 365 },
+      { x: GAME_WIDTH / 2 + 170, y: 410 },
     ];
 
     // PNG 자산 로드 (실패 시 이모지 fallback)
@@ -163,7 +166,8 @@ export class ResultScreen extends Container {
   }
 
   private renderScoreBreakdown(result: ResultData): void {
-    const baseY = GAME_HEIGHT / 2 + 30;
+    // popup_bg 의 크림 영역 안 (씬이름 아래 ~ 총점 라벨 위)
+    const baseY = 600;
     const items = [
       { label: t('result.score'), value: result.baseScore },
       { label: t('result.time_bonus'), value: result.timeBonus },
@@ -172,22 +176,22 @@ export class ResultScreen extends Container {
     ];
 
     items.forEach((item, i) => {
-      const x = GAME_WIDTH / 2 - 300 + (i % 2) * 300;
-      const y = baseY + Math.floor(i / 2) * 40;
+      const x = GAME_WIDTH / 2 - 280 + (i % 2) * 280;
+      const y = baseY + Math.floor(i / 2) * 48;
 
       const label = new Text({
         text: item.label,
-        style: { fontSize: 22, fill: 0x666666 },
+        style: { fontSize: 22, fill: 0x6b4a2b, fontWeight: 'bold' },
       });
       label.position.set(x, y);
       this.addChild(label);
 
       const value = new Text({
         text: `+${item.value}`,
-        style: { fontSize: 22, fill: 0x000000, fontWeight: 'bold' },
+        style: { fontSize: 22, fill: 0x3a2410, fontWeight: 'bold' },
       });
       value.anchor.set(1, 0);
-      value.position.set(x + 200, y);
+      value.position.set(x + 220, y);
       this.addChild(value);
     });
   }
