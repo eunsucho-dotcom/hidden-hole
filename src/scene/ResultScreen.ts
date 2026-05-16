@@ -20,10 +20,11 @@ export class ResultScreen extends Container {
       .fill({ color: 0x000000, alpha: 0.7 });
     this.addChild(overlay);
 
-    // 결과 패널 PNG (popup_bg.png — 나무 카드 + 별 3개 장식)
-    // 네이티브 634×619, 표시 900×879, 중앙 (960, 540)
+    // 결과 패널 PNG (popup_bg.png — 나무 카드 + 별 자리)
+    // 표시 900×879, 중앙 (960, 460) — 화면 중앙보다 80px 위
+    const PANEL_CY = 460;
     const panelFallback = new Graphics()
-      .roundRect(GAME_WIDTH / 2 - 450, GAME_HEIGHT / 2 - 440, 900, 879, 30)
+      .roundRect(GAME_WIDTH / 2 - 450, PANEL_CY - 440, 900, 879, 30)
       .fill({ color: COLORS.CREAM_WHITE })
       .stroke({ color: COLORS.SUNSET_ORANGE, width: 6 });
     this.addChild(panelFallback);
@@ -36,11 +37,11 @@ export class ResultScreen extends Container {
       const scale = DISPLAY_W / tex.width;
       panel.width = tex.width * scale;
       panel.height = tex.height * scale;
-      panel.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+      panel.position.set(GAME_WIDTH / 2, PANEL_CY);
       this.addChildAt(panel, 1); // overlay 위, 컨텐츠 아래
     }).catch(() => {});
 
-    // 씬 이름 — 상단(별 아래)
+    // 씬 이름 — 별 아래
     const sceneName = new Text({
       text: tBilingual(result.sceneTitle),
       style: {
@@ -51,7 +52,7 @@ export class ResultScreen extends Container {
       },
     });
     sceneName.anchor.set(0.5);
-    sceneName.position.set(GAME_WIDTH / 2, 520);
+    sceneName.position.set(GAME_WIDTH / 2, 460);
     this.addChild(sceneName);
 
     // 별점 — popup_bg 의 별 자리에 오버레이로 실제 점수 표현
@@ -66,7 +67,7 @@ export class ResultScreen extends Container {
       style: { fontSize: 26, fill: 0x8a6a4a, fontWeight: 'bold' },
     });
     totalLabel.anchor.set(0.5);
-    totalLabel.position.set(GAME_WIDTH / 2, 770);
+    totalLabel.position.set(GAME_WIDTH / 2, 660);
     this.addChild(totalLabel);
 
     const totalScore = new Text({
@@ -79,15 +80,15 @@ export class ResultScreen extends Container {
       },
     });
     totalScore.anchor.set(0.5);
-    totalScore.position.set(GAME_WIDTH / 2, 835);
+    totalScore.position.set(GAME_WIDTH / 2, 735);
     this.addChild(totalScore);
 
-    // 버튼 2개 — 패널 아래 (정리감)
-    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 130, GAME_HEIGHT - 70, () => {
+    // 버튼 2개 — 패널 안쪽 (총점 아래, 패널 바닥보다 위)
+    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 130, 840, () => {
       audio.play('button');
       this.onRetryCallback?.();
     });
-    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 130, GAME_HEIGHT - 70, () => {
+    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 130, 840, () => {
       audio.play('button');
       this.onHomeCallback?.();
     });
@@ -105,12 +106,14 @@ export class ResultScreen extends Container {
   }
 
   private async renderStars(stars: number): Promise<void> {
-    // popup_bg.png 의 별 위치에 맞춰 오버레이 (네이티브 위치 → 1.42x scale + 중심 정렬)
-    const STAR_SIZE = 130;
-    const starPositions = [
-      { x: GAME_WIDTH / 2 - 170, y: 410 },
-      { x: GAME_WIDTH / 2,        y: 365 },
-      { x: GAME_WIDTH / 2 + 170, y: 410 },
+    // popup_bg 의 별 크기에 맞춤 — 가운데 별이 좌우보다 더 크고 살짝 위
+    const SIDE_STAR_SIZE = 180;
+    const CENTER_STAR_SIZE = 220;
+    // 가운데(960, 320) 기준, 좌우는 살짝 아래 + 바깥
+    const starConfigs = [
+      { x: GAME_WIDTH / 2 - 200, y: 370, size: SIDE_STAR_SIZE },
+      { x: GAME_WIDTH / 2,        y: 305, size: CENTER_STAR_SIZE },
+      { x: GAME_WIDTH / 2 + 200, y: 370, size: SIDE_STAR_SIZE },
     ];
 
     // PNG 자산 로드 (실패 시 이모지 fallback)
@@ -123,7 +126,7 @@ export class ResultScreen extends Container {
       emptyTex = await Assets.load('./images/star_empty.png');
     } catch {}
 
-    starPositions.forEach((pos, i) => {
+    starConfigs.forEach((cfg, i) => {
       const isFilled = i < stars;
       let star: Sprite | Text;
 
@@ -131,18 +134,18 @@ export class ResultScreen extends Container {
       if (tex) {
         star = new Sprite(tex);
         star.anchor.set(0.5);
-        const scale = STAR_SIZE / Math.max(tex.width, tex.height);
+        const scale = cfg.size / Math.max(tex.width, tex.height);
         star.width = tex.width * scale;
         star.height = tex.height * scale;
       } else {
         // PNG 로드 실패 시 이모지 fallback
         star = new Text({
           text: isFilled ? '⭐' : '☆',
-          style: { fontSize: 100 },
+          style: { fontSize: cfg.size * 0.85 },
         });
         star.anchor.set(0.5);
       }
-      star.position.set(pos.x, pos.y);
+      star.position.set(cfg.x, cfg.y);
       star.scale.set(0);
       this.addChild(star);
 
@@ -166,8 +169,8 @@ export class ResultScreen extends Container {
   }
 
   private renderScoreBreakdown(result: ResultData): void {
-    // popup_bg 의 크림 영역 안 (씬이름 아래 ~ 총점 라벨 위)
-    const baseY = 600;
+    // 씬 이름 아래, 총점 위 — 위로 올라간 패널에 맞춰
+    const baseY = 510;
     const items = [
       { label: t('result.score'), value: result.baseScore },
       { label: t('result.time_bonus'), value: result.timeBonus },
