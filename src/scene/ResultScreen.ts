@@ -1,7 +1,7 @@
 import { Container, Graphics, Text, Sprite, Texture, Assets } from 'pixi.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../primitives/constants';
 import { audio } from '../audio/SoundManager';
-import { t, tBilingual } from '../primitives/i18n';
+import { t } from '../primitives/i18n';
 import type { ResultData } from '../primitives/result-types';
 
 /**
@@ -41,20 +41,7 @@ export class ResultScreen extends Container {
       this.addChildAt(panel, 1); // overlay 위, 컨텐츠 아래
     }).catch(() => {});
 
-    // 씬 이름 — 별 아래
-    const sceneName = new Text({
-      text: tBilingual(result.sceneTitle),
-      style: {
-        fontSize: 38,
-        fill: 0x6b4a2b,
-        fontWeight: 'bold',
-        fontStyle: 'italic',
-      },
-    });
-    sceneName.anchor.set(0.5);
-    sceneName.position.set(GAME_WIDTH / 2, 430);
-    this.addChild(sceneName);
-
+    // 씬 이름 — 사용자 요청으로 제거됨
     // 별점 — popup_bg 의 별 자리에 오버레이로 실제 점수 표현
     this.renderStars(result.stars);
 
