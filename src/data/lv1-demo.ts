@@ -127,7 +127,7 @@ const CATEGORIES: CategorySpec[] = [
       { x: 644, y: 1002, w: 136, h: 92, z: 16 },
     ] },
 
-  { category: 'tissue', label: '휴지뭉치', emoji: '🧻', defaultSize: { w: 50, h: 50 }, variants: 3,
+  { category: 'tissue', label: '휴지뭉치', emoji: '🧻', defaultSize: { w: 50, h: 50 }, variants: 1,
     instances: [
       { x: 767, y: 182, w: 43, h: 38, z: 50 },
       { x: 738, y: 949, w: 52, h: 47, z: 10 },
