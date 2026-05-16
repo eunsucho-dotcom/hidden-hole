@@ -172,8 +172,8 @@ function generateTrash(): TrashItem[] {
     spec.instances.forEach((inst, i) => {
       const variantNum = inst.v ?? (spec.variants ? (i % spec.variants) + 1 : null);
       const texturePath = variantNum !== null
-        ? `/images/trash_lv2_${spec.category}_${variantNum}.png`
-        : `/images/trash_lv2_${spec.category}.png`;
+        ? `./images/trash_lv2_${spec.category}_${variantNum}.png`
+        : `./images/trash_lv2_${spec.category}.png`;
 
       items.push({
         id: `${spec.category}_${i + 1}`,
@@ -203,8 +203,8 @@ export const LV2_DEMO: SceneData = {
     ko: '요리 폭격 다음 날',
     en: 'After Cooking Chaos',
   },
-  backgroundClean: '/images/bg_lv2_clean.png',
-  backgroundMessy: '/images/bg_lv2_clean.png',
+  backgroundClean: './images/bg_lv2_clean.png',
+  backgroundMessy: './images/bg_lv2_clean.png',
   trashItems: generateTrash(),
   interactiveObjects: [],
   timeLimit: 120,

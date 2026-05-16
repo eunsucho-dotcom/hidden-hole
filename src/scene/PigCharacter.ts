@@ -5,7 +5,7 @@ import { MouthPoofEffect } from './MouthPoofEffect';
 /**
  * 시그니처 캐릭터 — 돼지인형 (스프라이트시트 애니메이션)
  *
- * 스프라이트시트 구조 (`/images/pig.png` 2000×2892):
+ * 스프라이트시트 구조 (`./images/pig.png` 2000×2892):
  *   - 프레임 사이즈: 400 × 482
  *   - 5 cols × 5 rows = 25 + 마지막 row 1 = 총 26 프레임
  *   - 프레임 0~25 순환 (입 닫힘 → 벌림 → 닫힘 loop)
@@ -51,7 +51,7 @@ export class PigCharacter extends Container {
   private async loadAnimation(): Promise<void> {
     let sheet: Texture | undefined;
     try {
-      sheet = await Assets.load('/images/pig.png');
+      sheet = await Assets.load('./images/pig.png');
     } catch {}
     if (!sheet) return;
 

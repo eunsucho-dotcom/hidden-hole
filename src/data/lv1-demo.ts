@@ -184,8 +184,8 @@ function generateTrash(): TrashItem[] {
     spec.instances.forEach((inst, i) => {
       const variantNum = inst.v ?? (spec.variants ? (i % spec.variants) + 1 : null);
       const texturePath = variantNum !== null
-        ? `/images/trash_lv1_${spec.category}${variantNum}.png`
-        : `/images/trash_lv1_${spec.category}.png`;
+        ? `./images/trash_lv1_${spec.category}${variantNum}.png`
+        : `./images/trash_lv1_${spec.category}.png`;
 
       items.push({
         id: `${spec.category}_${i + 1}`,
@@ -215,8 +215,8 @@ export const LV1_DEMO: SceneData = {
     ko: '파티 다음 날 새벽',
     en: 'The Morning After The Party.',
   },
-  backgroundClean: '/images/bg_lv1_clean.png',
-  backgroundMessy: '/images/bg_lv1_clean.png',
+  backgroundClean: './images/bg_lv1_clean.png',
+  backgroundMessy: './images/bg_lv1_clean.png',
   trashItems: generateTrash(),
   interactiveObjects: [
     {
@@ -224,8 +224,8 @@ export const LV1_DEMO: SceneData = {
       position: { x: 913, y: 475 },
       size: { width: 188, height: 163 },
       z: 73,
-      textureBefore: '/images/interact_lv1_cushion.png',
-      textureAfter: '/images/interact_lv1_cushion.png',
+      textureBefore: './images/interact_lv1_cushion.png',
+      textureAfter: './images/interact_lv1_cushion.png',
       interactionType: 'tap',
       isInteracted: false,
       revealsTrashIds: ['frame_1'],
@@ -235,8 +235,8 @@ export const LV1_DEMO: SceneData = {
       position: { x: 1621, y: 675 },
       size: { width: 188, height: 291 },
       z: 64,
-      textureBefore: '/images/interact_lv1_flowerpot.png',
-      textureAfter: '/images/interact_lv1_flowerpot.png',
+      textureBefore: './images/interact_lv1_flowerpot.png',
+      textureAfter: './images/interact_lv1_flowerpot.png',
       interactionType: 'tap',
       isInteracted: false,
       revealsTrashIds: ['ring_1'],

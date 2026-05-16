@@ -35,7 +35,7 @@ export class GameHUD extends Container {
     });
     this.timerText.position.set(115, 28);
     this.addChild(this.timerText);
-    this.loadHudIcon('/images/hud_timer.png', 64, 45, '⏱', 70);
+    this.loadHudIcon('./images/hud_timer.png', 64, 45, '⏱', 70);
 
     // 점수 패널 배경 (우상단, 사운드 토글과 겹치지 않게 왼쪽으로)
     this.loadHudPanel(GAME_WIDTH - 380, 12, 260, 64);
@@ -66,7 +66,7 @@ export class GameHUD extends Container {
     this.scoreText.position.set(GAME_WIDTH - 200, 28);
     this.addChild(this.scoreText);
     // 점수 아이콘 — 숫자 좌측에 위치 (점수가 길어져도 아이콘은 고정)
-    this.loadHudIcon('/images/hud_score.png', 58, 45, '🪙', GAME_WIDTH - 330);
+    this.loadHudIcon('./images/hud_score.png', 58, 45, '🪙', GAME_WIDTH - 330);
 
     // 스킬 슬롯 (우하단) — 현재 비활성 (visible=false). 필요 시 true로 변경
     this.skill1Slot = this.createSkillSlot('🌀', t('hud.skill_eok.label'), 'LOCKED', 0);
@@ -116,10 +116,10 @@ export class GameHUD extends Container {
     let onTex: Texture | undefined;
     let offTex: Texture | undefined;
     try {
-      onTex = await Assets.load('/images/icon_sound_on.png');
+      onTex = await Assets.load('./images/icon_sound_on.png');
     } catch {}
     try {
-      offTex = await Assets.load('/images/icon_sound_off.png');
+      offTex = await Assets.load('./images/icon_sound_off.png');
     } catch {}
 
     if (!onTex && !offTex) return;
@@ -239,7 +239,7 @@ export class GameHUD extends Container {
       lockFallback.anchor.set(0.5);
       lockFallback.position.set(60, 42);
       c.addChild(lockFallback);
-      Assets.load('/images/icon_lock.png').then((tex: Texture) => {
+      Assets.load('./images/icon_lock.png').then((tex: Texture) => {
         c.removeChild(lockFallback);
         lockFallback.destroy();
         const lockSprite = new Sprite(tex);
@@ -292,7 +292,7 @@ export class GameHUD extends Container {
    */
   private async loadHudPanel(x: number, y: number, width: number, height: number): Promise<void> {
     try {
-      const tex = await Assets.load('/images/timer_score_panel.png');
+      const tex = await Assets.load('./images/timer_score_panel.png');
       const sprite = new Sprite(tex);
       sprite.width = width;
       sprite.height = height;

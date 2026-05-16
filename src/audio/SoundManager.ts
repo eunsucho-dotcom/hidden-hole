@@ -19,7 +19,7 @@ export class SoundManager {
   /**
    * 사운드 등록 (사전 로드)
    * @param key 식별자 (예: 'click_paper', 'blackhole_main')
-   * @param src 파일 경로 (예: '/sounds/sfx_click_paper.mp3')
+   * @param src 파일 경로 (예: './sounds/sfx_click_paper.mp3')
    */
   register(key: string, src: string, options: { volume?: number; loop?: boolean; rate?: number } = {}): void {
     const sound = new Howl({
@@ -112,56 +112,56 @@ export const audio = new SoundManager();
  */
 export function initializeSounds(): void {
   // BGM
-  audio.register('bgm_lv1', '/sounds/bgm_game_lv1.mp3', { loop: true });
-  audio.register('bgm_lv2', '/sounds/bgm_game_lv2.mp3', { loop: true });
-  audio.register('bgm_lv3', '/sounds/bgm_game_lv3.mp3', { loop: true });
-  audio.register('bgm_title', '/sounds/bgm_title.mp3', { loop: true });
+  audio.register('bgm_lv1', './sounds/bgm_game_lv1.mp3', { loop: true });
+  audio.register('bgm_lv2', './sounds/bgm_game_lv2.mp3', { loop: true });
+  audio.register('bgm_lv3', './sounds/bgm_game_lv3.mp3', { loop: true });
+  audio.register('bgm_title', './sounds/bgm_title.mp3', { loop: true });
   // 3종 BGM 옵션 — main.ts에서 마음에 드는 키로 audio.playBgm() 호출하면 됨
-  audio.register('bgm_lofi', '/sounds/bgm_lofi.mp3', { loop: true });
-  audio.register('bgm_jazz', '/sounds/bgm_jazz.mp3', { loop: true });
-  audio.register('bgm_ambient', '/sounds/bgm_ambient.mp3', { loop: true, rate: 0.5 });
+  audio.register('bgm_lofi', './sounds/bgm_lofi.mp3', { loop: true });
+  audio.register('bgm_jazz', './sounds/bgm_jazz.mp3', { loop: true });
+  audio.register('bgm_ambient', './sounds/bgm_ambient.mp3', { loop: true, rate: 0.5 });
   // 후보 3종 — 본인이 듣고 마음에 드는 거 선택
-  audio.register('bgm_option1', '/sounds/bgm_option1.mp3', { loop: true });
-  audio.register('bgm_option2', '/sounds/bgm_option2.mp3', { loop: true });
-  audio.register('bgm_option3', '/sounds/bgm_option3.mp3', { loop: true });
+  audio.register('bgm_option1', './sounds/bgm_option1.mp3', { loop: true });
+  audio.register('bgm_option2', './sounds/bgm_option2.mp3', { loop: true });
+  audio.register('bgm_option3', './sounds/bgm_option3.mp3', { loop: true });
 
   // 클릭 SFX (사물별 다양) — ASMR 강조를 위해 볼륨 최대치
-  audio.register('click_paper', '/sounds/sfx_click_paper.mp3', { volume: 1.0 });
-  audio.register('click_plastic', '/sounds/sfx_click_plastic.mp3', { volume: 1.0 });
-  audio.register('click_fabric', '/sounds/sfx_click_fabric.mp3', { volume: 1.0 });
-  audio.register('click_glass', '/sounds/sfx_click_glass.mp3', { volume: 1.0 });
-  audio.register('click_box', '/sounds/sfx_click_box.mp3', { volume: 1.0 });
-  audio.register('click_cup', '/sounds/sfx_click_cup.mp3', { volume: 1.0 });
-  audio.register('click_vinyl', '/sounds/sfx_click_vinyl.mp3', { volume: 1.0 });
-  audio.register('click_metal', '/sounds/sfx_click_metal.mp3', { volume: 1.0 });
-  audio.register('click_can', '/sounds/sfx_click_can.mp3', { volume: 1.0 });
-  audio.register('click_cracker', '/sounds/sfx_click_cracker.mp3', { volume: 1.0 });
-  audio.register('click_paper_towel', '/sounds/sfx_click_paper_towel.mp3', { volume: 1.0 });
-  audio.register('click_crumple', '/sounds/sfx_click_crumple.mp3', { volume: 1.0 });
-  audio.register('category_complete', '/sounds/sfx_category_complete.mp3', { volume: 1.0 });
-  audio.register('pig_open', '/sounds/sfx_pig_open.mp3', { volume: 0.9 });
+  audio.register('click_paper', './sounds/sfx_click_paper.mp3', { volume: 1.0 });
+  audio.register('click_plastic', './sounds/sfx_click_plastic.mp3', { volume: 1.0 });
+  audio.register('click_fabric', './sounds/sfx_click_fabric.mp3', { volume: 1.0 });
+  audio.register('click_glass', './sounds/sfx_click_glass.mp3', { volume: 1.0 });
+  audio.register('click_box', './sounds/sfx_click_box.mp3', { volume: 1.0 });
+  audio.register('click_cup', './sounds/sfx_click_cup.mp3', { volume: 1.0 });
+  audio.register('click_vinyl', './sounds/sfx_click_vinyl.mp3', { volume: 1.0 });
+  audio.register('click_metal', './sounds/sfx_click_metal.mp3', { volume: 1.0 });
+  audio.register('click_can', './sounds/sfx_click_can.mp3', { volume: 1.0 });
+  audio.register('click_cracker', './sounds/sfx_click_cracker.mp3', { volume: 1.0 });
+  audio.register('click_paper_towel', './sounds/sfx_click_paper_towel.mp3', { volume: 1.0 });
+  audio.register('click_crumple', './sounds/sfx_click_crumple.mp3', { volume: 1.0 });
+  audio.register('category_complete', './sounds/sfx_category_complete.mp3', { volume: 1.0 });
+  audio.register('pig_open', './sounds/sfx_pig_open.mp3', { volume: 0.9 });
 
   // 인터랙션 SFX — ASMR 강조를 위해 볼륨 최대치
-  audio.register('drag_start', '/sounds/sfx_drag_start.mp3', { volume: 1.0 });
-  audio.register('drag_complete', '/sounds/sfx_drag_complete.mp3', { volume: 1.0 });
-  audio.register('lift', '/sounds/sfx_lift.mp3', { volume: 1.0 });
-  audio.register('swipe', '/sounds/sfx_swipe.mp3', { volume: 1.0 });
-  audio.register('pop', '/sounds/sfx_pop.mp3', { volume: 1.0 });
+  audio.register('drag_start', './sounds/sfx_drag_start.mp3', { volume: 1.0 });
+  audio.register('drag_complete', './sounds/sfx_drag_complete.mp3', { volume: 1.0 });
+  audio.register('lift', './sounds/sfx_lift.mp3', { volume: 1.0 });
+  audio.register('swipe', './sounds/sfx_swipe.mp3', { volume: 1.0 });
+  audio.register('pop', './sounds/sfx_pop.mp3', { volume: 1.0 });
 
   // 블랙홀 흡입 시퀀스 (5단계)
-  audio.register('blackhole_start', '/sounds/sfx_blackhole_start.mp3');
-  audio.register('blackhole_main', '/sounds/sfx_blackhole_main.mp3');
-  audio.register('blackhole_climax', '/sounds/sfx_blackhole_climax.mp3');
-  audio.register('clean_reveal', '/sounds/sfx_clean_reveal.mp3');
+  audio.register('blackhole_start', './sounds/sfx_blackhole_start.mp3');
+  audio.register('blackhole_main', './sounds/sfx_blackhole_main.mp3');
+  audio.register('blackhole_climax', './sounds/sfx_blackhole_climax.mp3');
+  audio.register('clean_reveal', './sounds/sfx_clean_reveal.mp3');
 
   // UI / 결과
-  audio.register('perfect', '/sounds/sfx_perfect.mp3');
-  audio.register('star', '/sounds/sfx_star.mp3', { volume: 0.6 });
-  audio.register('button', '/sounds/sfx_button.mp3', { volume: 0.5 });
+  audio.register('perfect', './sounds/sfx_perfect.mp3');
+  audio.register('star', './sounds/sfx_star.mp3', { volume: 0.6 });
+  audio.register('button', './sounds/sfx_button.mp3', { volume: 0.5 });
 
   // 스킬
-  audio.register('skill_eok', '/sounds/sfx_skill_eok.mp3');
-  audio.register('skill_clear', '/sounds/sfx_skill_clear.mp3');
+  audio.register('skill_eok', './sounds/sfx_skill_eok.mp3');
+  audio.register('skill_clear', './sounds/sfx_skill_clear.mp3');
 
   console.log('🔊 사운드 시스템 초기화 완료');
 }

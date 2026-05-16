@@ -159,7 +159,7 @@ class Game {
  */
 async function preloadFonts(): Promise<void> {
   const fonts = [
-    { family: 'ARLRDBD', url: '/fonts/ARLRDBD.TTF' },
+    { family: 'ARLRDBD', url: './fonts/ARLRDBD.TTF' },
   ];
   for (const f of fonts) {
     try {

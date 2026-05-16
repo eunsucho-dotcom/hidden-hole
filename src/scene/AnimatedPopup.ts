@@ -5,7 +5,7 @@ import { t } from '../primitives/i18n';
 /**
  * 팝업 애니메이션 컴포넌트 — 25프레임 스프라이트시트(5×5) 기반 돼지 청소 모션
  *
- * 시트 구조 (`/images/popup animation.png` 1254×1254):
+ * 시트 구조 (`./images/popup animation.png` 1254×1254):
  *   - 5 cols × 5 rows = 25 프레임
  *   - 프레임 1칸 ≈ 250×250 (라벨 영역 포함)
  *   - 라벨 영역은 좌상단 ~30px → 크롭으로 제외
@@ -83,7 +83,7 @@ export class AnimatedPopup extends Container {
   private async loadAnimation(): Promise<void> {
     let sheet: Texture | undefined;
     try {
-      sheet = await Assets.load('/images/popup animation.png');
+      sheet = await Assets.load('./images/popup animation.png');
     } catch (e) {
       console.warn('팝업 애니메이션 로드 실패', e);
     }

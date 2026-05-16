@@ -340,7 +340,7 @@ class CategorySlot extends Container {
     // 슬롯 배경 — Graphics fallback + PNG sprite (비동기 로드)
     this.bg = new Graphics();
     this.addChild(this.bg);
-    Assets.load('/images/icon_panel.png').then((tex: Texture) => {
+    Assets.load('./images/icon_panel.png').then((tex: Texture) => {
       const sprite = new Sprite(tex);
       sprite.width = ITEM_SLOT_SIZE;
       sprite.height = ITEM_SLOT_SIZE;
@@ -401,7 +401,7 @@ class CategorySlot extends Container {
     });
     lockFallback.anchor.set(1, 0);
     this.lockBadge.addChild(lockFallback);
-    Assets.load('/images/icon_lock.png').then((tex: Texture) => {
+    Assets.load('./images/icon_lock.png').then((tex: Texture) => {
       this.lockBadge.removeChild(lockFallback);
       lockFallback.destroy();
       const lockSprite = new Sprite(tex);

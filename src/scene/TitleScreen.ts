@@ -70,7 +70,7 @@ export class TitleScreen extends Container {
     // 1. 배경 PNG (logo_bg.png) — 풀스크린 cover, 항상 보임
     let bgTex: Texture | undefined;
     try {
-      bgTex = await Assets.load('/images/logo_bg.png');
+      bgTex = await Assets.load('./images/logo_bg.png');
     } catch {}
     if (bgTex) {
       this.bgSprite = new Sprite(bgTex);
@@ -88,7 +88,7 @@ export class TitleScreen extends Container {
     // 2. 타이틀 로고 (title.png) — Hidden Hole 텍스트
     let titleTex: Texture | undefined;
     try {
-      titleTex = await Assets.load('/images/title.png');
+      titleTex = await Assets.load('./images/title.png');
     } catch {}
     if (titleTex) {
       this.titleSprite = new Sprite(titleTex);
@@ -103,7 +103,7 @@ export class TitleScreen extends Container {
     // 3. 돼지 캐릭터 (logo_character.png) — 먼지털이개 들고 있는 돼지
     let pigTex: Texture | undefined;
     try {
-      pigTex = await Assets.load('/images/logo_character.png');
+      pigTex = await Assets.load('./images/logo_character.png');
     } catch {}
     if (pigTex) {
       this.titlePigSprite = new Sprite(pigTex);
@@ -122,7 +122,7 @@ export class TitleScreen extends Container {
 
     let txtTex: Texture | undefined;
     try {
-      txtTex = await Assets.load('/images/Loading-bar_txt.png');
+      txtTex = await Assets.load('./images/Loading-bar_txt.png');
     } catch {}
     if (txtTex) {
       this.loadingTxtSprite = new Sprite(txtTex);
@@ -137,7 +137,7 @@ export class TitleScreen extends Container {
 
     let barTex: Texture | undefined;
     try {
-      barTex = await Assets.load('/images/Loading-bar.png');
+      barTex = await Assets.load('./images/Loading-bar.png');
     } catch {}
     if (barTex) {
       this.loadingBarSprite = new Sprite(barTex);
@@ -153,7 +153,7 @@ export class TitleScreen extends Container {
     // 노란 fill PNG (입체감 있는 캡슐) — 마스크로 채워지는 영역 제어
     let fillTex: Texture | undefined;
     try {
-      fillTex = await Assets.load('/images/Loading-bar1.png');
+      fillTex = await Assets.load('./images/Loading-bar1.png');
     } catch {}
     if (fillTex) {
       const fillFullW = this.barDisplayW - this.fillInsetX * 2;
@@ -222,7 +222,7 @@ export class TitleScreen extends Container {
 
     // PNG로 교체
     try {
-      const btnTex = await Assets.load('/images/btn_play.png');
+      const btnTex = await Assets.load('./images/btn_play.png');
       if (btnTex && this.btnContainer) {
         this.btnContainer.removeChild(bgFallback);
         this.btnContainer.removeChild(labelFallback);
