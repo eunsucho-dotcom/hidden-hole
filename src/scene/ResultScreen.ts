@@ -80,8 +80,7 @@ export class ResultScreen extends Container {
       this.onHomeCallback?.();
     });
 
-    // X 닫기 버튼 (popup_x.png) — 패널 우상단 모서리
-    this.renderCloseButton();
+    // X 버튼 제거됨 — 3초 후 자동 진행 (main.ts 에서 처리)
 
     // 등장 애니메이션
     this.alpha = 0;
@@ -245,40 +244,6 @@ export class ResultScreen extends Container {
 
     this.addChild(btn);
     return btn;
-  }
-
-  /** popup_bg 우상단 모서리에 X 닫기 버튼 — 위치 고정, 클릭=닫기 */
-  private renderCloseButton(): void {
-    const btn = new Container();
-    // 고정 위치 — 패널 우상단 모서리
-    btn.position.set(1395, 55);
-    const SIZE = 90;
-    Assets.load('./images/popup_x.png')
-      .then((tex: Texture) => {
-        const sprite = new Sprite(tex);
-        sprite.anchor.set(0.5);
-        const scale = SIZE / Math.max(tex.width, tex.height);
-        sprite.width = tex.width * scale;
-        sprite.height = tex.height * scale;
-        btn.addChild(sprite);
-      })
-      .catch(() => {
-        const fallback = new Text({
-          text: '❌',
-          style: { fontSize: 56 },
-        });
-        fallback.anchor.set(0.5);
-        btn.addChild(fallback);
-      });
-    btn.eventMode = 'static';
-    btn.cursor = 'pointer';
-    btn.on('pointerover', () => btn.scale.set(1.12));
-    btn.on('pointerout', () => btn.scale.set(1));
-    btn.on('pointertap', () => {
-      audio.play('button');
-      this.onHomeCallback?.();
-    });
-    this.addChild(btn);
   }
 
   onRetry(callback: () => void): void {

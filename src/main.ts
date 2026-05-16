@@ -106,15 +106,15 @@ class Game {
           stars: 3,
         };
         const preview = new ResultScreen(fakeResult);
-        preview.onRetry(() => {
+        const cleanup = () => {
           if (preview.parent) this.root.removeChild(preview);
           preview.destroy({ children: true });
-        });
-        preview.onHome(() => {
-          if (preview.parent) this.root.removeChild(preview);
-          preview.destroy({ children: true });
-        });
+        };
+        preview.onRetry(cleanup);
+        preview.onHome(cleanup);
         this.root.addChild(preview);
+        // 3초 후 자동 닫기 (실제 게임과 동일)
+        window.setTimeout(cleanup, 3000);
       }
     };
     window.addEventListener('keydown', keyHandler);
@@ -153,13 +153,12 @@ class Game {
         this.showTitle();
       });
       this.root.addChild(resultScreen);
-      // 다음 레벨 있으면 5초 후 자동 진행
-      if (nextLevel) {
-        autoTimer = window.setTimeout(() => {
-          cleanupResult();
-          this.showLevel(nextLevel);
-        }, 5000);
-      }
+      // 3초 후 자동 진행 — 다음 레벨 있으면 그쪽으로, 마지막이면 타이틀로
+      autoTimer = window.setTimeout(() => {
+        cleanupResult();
+        if (nextLevel) this.showLevel(nextLevel);
+        else this.showTitle();
+      }, 3000);
     });
     this.root.addChild(scene);
     this.currentScene = scene;
