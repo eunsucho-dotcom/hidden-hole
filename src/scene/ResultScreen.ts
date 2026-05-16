@@ -52,7 +52,7 @@ export class ResultScreen extends Container {
       },
     });
     sceneName.anchor.set(0.5);
-    sceneName.position.set(GAME_WIDTH / 2, 460);
+    sceneName.position.set(GAME_WIDTH / 2, 430);
     this.addChild(sceneName);
 
     // 별점 — popup_bg 의 별 자리에 오버레이로 실제 점수 표현
@@ -67,7 +67,7 @@ export class ResultScreen extends Container {
       style: { fontSize: 26, fill: 0x8a6a4a, fontWeight: 'bold' },
     });
     totalLabel.anchor.set(0.5);
-    totalLabel.position.set(GAME_WIDTH / 2, 660);
+    totalLabel.position.set(GAME_WIDTH / 2, 595);
     this.addChild(totalLabel);
 
     const totalScore = new Text({
@@ -80,18 +80,21 @@ export class ResultScreen extends Container {
       },
     });
     totalScore.anchor.set(0.5);
-    totalScore.position.set(GAME_WIDTH / 2, 735);
+    totalScore.position.set(GAME_WIDTH / 2, 665);
     this.addChild(totalScore);
 
-    // 버튼 2개 — 패널 안쪽 (총점 아래, 패널 바닥보다 위)
-    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 130, 840, () => {
+    // 버튼 2개 — 패널 안쪽 (총점 아래)
+    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 130, 790, () => {
       audio.play('button');
       this.onRetryCallback?.();
     });
-    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 130, 840, () => {
+    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 130, 790, () => {
       audio.play('button');
       this.onHomeCallback?.();
     });
+
+    // X 닫기 버튼 (popup_x.png) — 패널 우상단 모서리
+    this.renderCloseButton();
 
     // 등장 애니메이션
     this.alpha = 0;
@@ -106,14 +109,13 @@ export class ResultScreen extends Container {
   }
 
   private async renderStars(stars: number): Promise<void> {
-    // popup_bg 의 별 크기에 맞춤 — 가운데 별이 좌우보다 더 크고 살짝 위
-    const SIDE_STAR_SIZE = 180;
-    const CENTER_STAR_SIZE = 220;
-    // 가운데(960, 320) 기준, 좌우는 살짝 아래 + 바깥
+    // popup_bg 의 별 위치/크기 정확히 매칭 (네이티브 측정 후 1.42x scale)
+    // 네이티브: L=(189,203,110), M=(307,177,135), R=(435,200,110)
+    // 표시 = 1.4196배, 패널 중앙 (960, 460), top-left (510, 20.7)
     const starConfigs = [
-      { x: GAME_WIDTH / 2 - 200, y: 370, size: SIDE_STAR_SIZE },
-      { x: GAME_WIDTH / 2,        y: 305, size: CENTER_STAR_SIZE },
-      { x: GAME_WIDTH / 2 + 200, y: 370, size: SIDE_STAR_SIZE },
+      { x: 510 + 189 * 1.42, y: 20.7 + 203 * 1.42, size: 156 },
+      { x: 510 + 317 * 1.42, y: 20.7 + 177 * 1.42, size: 192 },
+      { x: 510 + 435 * 1.42, y: 20.7 + 200 * 1.42, size: 156 },
     ];
 
     // PNG 자산 로드 (실패 시 이모지 fallback)
@@ -169,8 +171,8 @@ export class ResultScreen extends Container {
   }
 
   private renderScoreBreakdown(result: ResultData): void {
-    // 씬 이름 아래, 총점 위 — 위로 올라간 패널에 맞춰
-    const baseY = 510;
+    // 씬 이름 아래, 총점 위
+    const baseY = 480;
     const items = [
       { label: t('result.score'), value: result.baseScore },
       { label: t('result.time_bonus'), value: result.timeBonus },
@@ -244,6 +246,43 @@ export class ResultScreen extends Container {
 
     this.addChild(btn);
     return btn;
+  }
+
+  /** popup_bg 우상단 모서리에 X 닫기 버튼 — 클릭 시 home 동작 */
+  private renderCloseButton(): void {
+    // 패널: 표시 900×879, 중앙 (960, 460), 우상단 ≈ (1410, 21)
+    // X는 모서리 안쪽으로 살짝 (1370, 65)
+    const btn = new Container();
+    btn.position.set(1370, 65);
+    const SIZE = 80;
+    Assets.load('./images/popup_x.png')
+      .then((tex: Texture) => {
+        const sprite = new Sprite(tex);
+        sprite.anchor.set(0.5);
+        const scale = SIZE / Math.max(tex.width, tex.height);
+        sprite.width = tex.width * scale;
+        sprite.height = tex.height * scale;
+        btn.addChild(sprite);
+      })
+      .catch(() => {
+        // fallback ❌
+        const fallback = new Text({
+          text: '❌',
+          style: { fontSize: 56 },
+        });
+        fallback.anchor.set(0.5);
+        btn.addChild(fallback);
+      });
+    btn.eventMode = 'static';
+    btn.cursor = 'pointer';
+    btn.on('pointerover', () => btn.scale.set(1.12));
+    btn.on('pointerout', () => btn.scale.set(1));
+    btn.on('pointertap', () => {
+      audio.play('button');
+      // X = 닫기 → home 동작 (타이틀로 복귀)
+      this.onHomeCallback?.();
+    });
+    this.addChild(btn);
   }
 
   onRetry(callback: () => void): void {

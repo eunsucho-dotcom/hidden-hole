@@ -80,9 +80,9 @@ export class GameHUD extends Container {
     this.skill2Slot.visible = false;
     this.addChild(this.skill2Slot);
 
-    // 사운드 토글 (코인 패널과 같은 Y, 1.3배 크게)
+    // 사운드 토글 — 1.5x 크기, 살짝 아래
     this.soundToggle = this.createSoundToggle();
-    this.soundToggle.position.set(GAME_WIDTH - 60, 44);
+    this.soundToggle.position.set(GAME_WIDTH - 75, 70);
     this.addChild(this.soundToggle);
   }
 
@@ -96,7 +96,7 @@ export class GameHUD extends Container {
     // PNG 로드 실패 시 fallback (🔊 텍스트)
     this.soundFallback = new Text({
       text: '🔊',
-      style: { fontSize: 44 },
+      style: { fontSize: 66 },
     });
     this.soundFallback.anchor.set(0.5);
     c.addChild(this.soundFallback);
@@ -132,7 +132,7 @@ export class GameHUD extends Container {
       this.soundFallback = undefined;
     }
 
-    const ICON_SIZE = 78;
+    const ICON_SIZE = 117;
     if (onTex) {
       this.soundOnSprite = new Sprite(onTex);
       this.soundOnSprite.anchor.set(0.5);
