@@ -1,4 +1,4 @@
-import { Container, Graphics, Text, Sprite, Texture, Assets, NineSliceSprite } from 'pixi.js';
+import { Container, Graphics, Text, Sprite, Texture, Rectangle, Assets, NineSliceSprite } from 'pixi.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../primitives/constants';
 import { audio } from '../audio/SoundManager';
 
@@ -8,9 +8,14 @@ import { audio } from '../audio/SoundManager';
  */
 export class TitleScreen extends Container {
   private onPlayCallback?: () => void;
+  // 로고 — Container로 감싸서 staggered pop-in 적용
+  private logoContainer: Container;
   private logoSprite?: Sprite;
   private logoFallback?: Text;
   private logoSubFallback?: Text;
+  // 타이틀 돼지 캐릭터
+  private titlePigContainer: Container;
+  private titlePigSprite?: Sprite;
   // 로딩
   private loadingBarFillSprite?: NineSliceSprite;
   private loadingBarFillMask?: Graphics;
@@ -35,7 +40,14 @@ export class TitleScreen extends Container {
       .fill({ color: COLORS.WARM_BEIGE });
     this.addChild(bg);
 
-    // 로고 placeholder
+    // 로고 컨테이너 (게임 중심에 위치, 초기엔 숨김 — 로딩 완료 후 pop-in)
+    this.logoContainer = new Container();
+    this.logoContainer.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    this.logoContainer.alpha = 0;
+    this.logoContainer.scale.set(0);
+    this.addChild(this.logoContainer);
+
+    // 로고 placeholder (logoContainer 내부에 (0,0) 기준)
     this.logoFallback = new Text({
       text: 'Hidden Hole',
       style: {
@@ -46,8 +58,8 @@ export class TitleScreen extends Container {
       },
     });
     this.logoFallback.anchor.set(0.5);
-    this.logoFallback.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 100);
-    this.addChild(this.logoFallback);
+    this.logoFallback.position.set(0, -100);
+    this.logoContainer.addChild(this.logoFallback);
 
     this.logoSubFallback = new Text({
       text: '히든홀',
@@ -58,8 +70,15 @@ export class TitleScreen extends Container {
       },
     });
     this.logoSubFallback.anchor.set(0.5);
-    this.logoSubFallback.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 30);
-    this.addChild(this.logoSubFallback);
+    this.logoSubFallback.position.set(0, 30);
+    this.logoContainer.addChild(this.logoSubFallback);
+
+    // 타이틀 돼지 컨테이너 (PLAY 버튼 위쪽, 초기엔 숨김)
+    this.titlePigContainer = new Container();
+    this.titlePigContainer.position.set(GAME_WIDTH / 2, GAME_HEIGHT - 430);
+    this.titlePigContainer.alpha = 0;
+    this.titlePigContainer.scale.set(0);
+    this.addChild(this.titlePigContainer);
 
     this.loadAssets();
     this.setupLoadingBar();
@@ -67,19 +86,20 @@ export class TitleScreen extends Container {
   }
 
   private async loadAssets(): Promise<void> {
+    // 로고 PNG 로드
     let logoTex: Texture | undefined;
     try {
       logoTex = await Assets.load('/images/logo_main.png');
     } catch {}
     if (logoTex && this.logoFallback && this.logoSubFallback) {
-      this.removeChild(this.logoFallback);
-      this.removeChild(this.logoSubFallback);
+      this.logoContainer.removeChild(this.logoFallback);
+      this.logoContainer.removeChild(this.logoSubFallback);
       this.logoFallback.destroy();
       this.logoSubFallback.destroy();
       this.logoFallback = undefined;
       this.logoSubFallback = undefined;
 
-      // 로고 — 풀스크린 cover (크게)
+      // 로고 — 풀스크린 cover (logoContainer는 GAME 중심에 있으므로 (0,0) 기준)
       this.logoSprite = new Sprite(logoTex);
       this.logoSprite.anchor.set(0.5);
       const scaleX = GAME_WIDTH / logoTex.width;
@@ -87,8 +107,28 @@ export class TitleScreen extends Container {
       const scale = Math.max(scaleX, scaleY);
       this.logoSprite.width = logoTex.width * scale;
       this.logoSprite.height = logoTex.height * scale;
-      this.logoSprite.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
-      this.addChildAt(this.logoSprite, 1);
+      this.logoSprite.position.set(0, 0);
+      this.logoContainer.addChild(this.logoSprite);
+    }
+
+    // 타이틀 돼지 (pig.png 스프라이트시트 frame 0 — 닫힘)
+    let pigTex: Texture | undefined;
+    try {
+      pigTex = await Assets.load('/images/pig.png');
+    } catch {}
+    if (pigTex) {
+      const frame0 = new Texture({
+        source: pigTex.source,
+        frame: new Rectangle(143, 113, 364, 418),
+      });
+      this.titlePigSprite = new Sprite(frame0);
+      this.titlePigSprite.anchor.set(0.5);
+      const targetH = 280;
+      const aspect = 364 / 418;
+      this.titlePigSprite.height = targetH;
+      this.titlePigSprite.width = targetH * aspect;
+      this.titlePigSprite.position.set(0, 0);
+      this.titlePigContainer.addChild(this.titlePigSprite);
     }
   }
 
@@ -168,6 +208,7 @@ export class TitleScreen extends Container {
     this.btnContainer = new Container();
     this.btnContainer.position.set(cx, cy);
     this.btnContainer.alpha = 0;
+    this.btnContainer.scale.set(0);
     this.btnContainer.visible = false;
 
     // fallback graphics
@@ -244,24 +285,53 @@ export class TitleScreen extends Container {
   }
 
   private showPlayButton(): void {
-    if (!this.btnContainer) return;
-    this.btnContainer.visible = true;
+    // 1. 로딩바·텍스트 fade out
+    this.fadeOutLoadingBar();
+    // 2. Staggered pop-in (0.3초 간격) — 로고 → 돼지 → PLAY 버튼
+    setTimeout(() => this.popIn(this.logoContainer), 200);
+    setTimeout(() => this.popIn(this.titlePigContainer), 500);
+    setTimeout(() => {
+      if (this.btnContainer) {
+        this.btnContainer.visible = true;
+        this.popIn(this.btnContainer);
+      }
+    }, 800);
+  }
+
+  private fadeOutLoadingBar(): void {
     const startTime = performance.now();
-    const fadeMs = 400;
+    const fadeMs = 350;
     const animate = () => {
       const t = Math.min((performance.now() - startTime) / fadeMs, 1);
-      // 로딩바·텍스트 fade out
       if (this.loadingBarSprite) this.loadingBarSprite.alpha = 1 - t;
       if (this.loadingBarFillSprite) this.loadingBarFillSprite.alpha = 1 - t;
       if (this.loadingTxtSprite) this.loadingTxtSprite.alpha = 1 - t;
-      // PLAY 버튼 fade in
-      if (this.btnContainer) this.btnContainer.alpha = t;
       if (t < 1) requestAnimationFrame(animate);
       else {
-        // 로딩바 요소 완전 제거
         if (this.loadingBarSprite) this.loadingBarSprite.visible = false;
         if (this.loadingBarFillSprite) this.loadingBarFillSprite.visible = false;
         if (this.loadingTxtSprite) this.loadingTxtSprite.visible = false;
+      }
+    };
+    animate();
+  }
+
+  /** pop-in 애니메이션 — scale 0→1.0 (살짝 오버슛) + alpha 0→1 */
+  private popIn(target: Container, durationMs: number = 360): void {
+    target.visible = true;
+    const startTime = performance.now();
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    const animate = () => {
+      const t = Math.min((performance.now() - startTime) / durationMs, 1);
+      // easeOutBack — 1.0 살짝 넘었다가 안착
+      const eased = 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+      target.alpha = Math.min(1, t * 1.8);
+      target.scale.set(eased);
+      if (t < 1) requestAnimationFrame(animate);
+      else {
+        target.alpha = 1;
+        target.scale.set(1);
       }
     };
     animate();

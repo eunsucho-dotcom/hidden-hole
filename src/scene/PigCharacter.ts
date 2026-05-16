@@ -1,5 +1,6 @@
 import { Container, Graphics, AnimatedSprite, Text, Texture, Rectangle, Assets } from 'pixi.js';
 import { audio } from '../audio/SoundManager';
+import { MouthPoofEffect } from './MouthPoofEffect';
 
 /**
  * 시그니처 캐릭터 — 돼지인형 (스프라이트시트 애니메이션)
@@ -97,6 +98,13 @@ export class PigCharacter extends Container {
     this.animSprite.stop();
     this.animateScale(1.1, 200);
     audio.play('pig_open');
+    // 입 주변에 팡! 흰 구름 파티클 효과
+    if (this.parent) {
+      const poof = new MouthPoofEffect(this.pigSize / 250);
+      const mouth = this.getMouthPosition();
+      poof.position.set(mouth.x, mouth.y);
+      this.parent.addChild(poof);
+    }
     // 빠른 입 벌리기: 250ms (frame 0 → 4)
     this.playToFrame(4, 250);
   }
