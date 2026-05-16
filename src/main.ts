@@ -3,6 +3,7 @@ import { GAME_WIDTH, GAME_HEIGHT, COLORS } from './primitives/constants';
 import { SplitScene } from './scene/SplitScene';
 import { TitleScreen } from './scene/TitleScreen';
 import { ResultScreen } from './scene/ResultScreen';
+import { AnimatedPopup } from './scene/AnimatedPopup';
 import { LV1_DEMO } from './data/lv1-demo';
 import { LV2_DEMO } from './data/lv2-demo';
 import { audio, initializeSounds } from './audio/SoundManager';
@@ -74,7 +75,7 @@ class Game {
     this.root.addChild(title);
     this.currentScene = title;
 
-    // 타이틀 화면에서 키보드 1/2 누르면 Lv1/Lv2 직접 시작 (테스트·디버그 용)
+    // 타이틀 화면에서 키보드 1/2 누르면 Lv1/Lv2 직접 시작, 3 누르면 팝업 애니 테스트
     const keyHandler = (e: KeyboardEvent) => {
       if (this.currentScene !== title) {
         window.removeEventListener('keydown', keyHandler);
@@ -82,6 +83,10 @@ class Game {
       }
       if (e.code === 'Digit1') this.showLevel(LV1_DEMO);
       else if (e.code === 'Digit2') this.showLevel(LV2_DEMO);
+      else if (e.code === 'Digit3') {
+        const popup = new AnimatedPopup('청소 준비 완료!', '탭해서 닫기');
+        this.root.addChild(popup);
+      }
     };
     window.addEventListener('keydown', keyHandler);
   }
