@@ -88,6 +88,31 @@ class Game {
         const popup = new AnimatedPopup(t('popup.title'), t('popup.subtitle'));
         this.root.addChild(popup);
       }
+      else if (e.code === 'Digit4') {
+        // 결과 팝업 미리보기 — 가짜 데이터로 ResultScreen 띄우기
+        const fakeResult = {
+          sceneId: 'preview',
+          sceneTitle: { ko: '실연의 밤', en: 'The Breakup Night' },
+          trashCount: 80,
+          elapsedMs: 87000,
+          baseScore: 1600,
+          timeBonus: 450,
+          comboBonus: 320,
+          perfectBonus: 500,
+          totalScore: 2870,
+          stars: 3,
+        };
+        const preview = new ResultScreen(fakeResult);
+        preview.onRetry(() => {
+          if (preview.parent) this.root.removeChild(preview);
+          preview.destroy({ children: true });
+        });
+        preview.onHome(() => {
+          if (preview.parent) this.root.removeChild(preview);
+          preview.destroy({ children: true });
+        });
+        this.root.addChild(preview);
+      }
     };
     window.addEventListener('keydown', keyHandler);
   }

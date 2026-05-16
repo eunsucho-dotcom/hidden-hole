@@ -40,7 +40,7 @@ export class GameHUD extends Container {
     // 점수 패널 배경 (우상단, 사운드 토글과 겹치지 않게 왼쪽으로)
     this.loadHudPanel(GAME_WIDTH - 380, 12, 260, 64);
 
-    // 활성화 카운터 (중)
+    // 활성화 카운터 (중) — 숨김 (사용자 요청)
     this.statusText = new Text({
       text: '0 / 0',
       style: {
@@ -51,6 +51,7 @@ export class GameHUD extends Container {
     });
     this.statusText.anchor.set(0.5, 0);
     this.statusText.position.set(GAME_WIDTH / 2, 18);
+    this.statusText.visible = false;
     this.addChild(this.statusText);
 
     // 점수 (우, 사운드 토글 왼쪽) — 숫자 사이즈 타이머와 동일
