@@ -45,16 +45,17 @@ export class TitleScreen extends Container {
       .fill({ color: COLORS.WARM_BEIGE });
     this.addChild(bg);
 
-    // 타이틀 로고 컨테이너 (상단, 초기엔 숨김)
+    // 원본 logo_main.png 의 1280x720 좌표를 1.5배 cover scale 로 게임 좌표 변환
+    // 타이틀 원본 중심 (640, 435) → (960, 653)
     this.titleContainer = new Container();
-    this.titleContainer.position.set(GAME_WIDTH / 2, 240);
+    this.titleContainer.position.set(960, 653);
     this.titleContainer.alpha = 0;
     this.titleContainer.scale.set(0);
     this.addChild(this.titleContainer);
 
-    // 돼지 캐릭터 컨테이너 (중앙, 초기엔 숨김)
+    // 돼지 원본 중심 (678, 319) → (1017, 479)
     this.titlePigContainer = new Container();
-    this.titlePigContainer.position.set(GAME_WIDTH / 2, 650);
+    this.titlePigContainer.position.set(1017, 479);
     this.titlePigContainer.alpha = 0;
     this.titlePigContainer.scale.set(0);
     this.addChild(this.titlePigContainer);
@@ -91,10 +92,9 @@ export class TitleScreen extends Container {
     if (titleTex) {
       this.titleSprite = new Sprite(titleTex);
       this.titleSprite.anchor.set(0.5);
-      const targetH = 320;
-      const aspect = titleTex.width / titleTex.height;
-      this.titleSprite.height = targetH;
-      this.titleSprite.width = targetH * aspect;
+      // 원본 native × 1.5배 (bg cover scale 과 동일)
+      this.titleSprite.width = titleTex.width * 1.5;
+      this.titleSprite.height = titleTex.height * 1.5;
       this.titleSprite.position.set(0, 0);
       this.titleContainer.addChild(this.titleSprite);
     }
@@ -107,10 +107,9 @@ export class TitleScreen extends Container {
     if (pigTex) {
       this.titlePigSprite = new Sprite(pigTex);
       this.titlePigSprite.anchor.set(0.5);
-      const targetH = 480;
-      const aspect = pigTex.width / pigTex.height;
-      this.titlePigSprite.height = targetH;
-      this.titlePigSprite.width = targetH * aspect;
+      // 원본 native × 1.5배 (bg cover scale 과 동일)
+      this.titlePigSprite.width = pigTex.width * 1.5;
+      this.titlePigSprite.height = pigTex.height * 1.5;
       this.titlePigSprite.position.set(0, 0);
       this.titlePigContainer.addChild(this.titlePigSprite);
     }
