@@ -1,19 +1,23 @@
-import { Container, Graphics, Text, Sprite, Texture, Rectangle, Assets, NineSliceSprite } from 'pixi.js';
+import { Container, Graphics, Text, Sprite, Texture, Assets, NineSliceSprite } from 'pixi.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../primitives/constants';
 import { audio } from '../audio/SoundManager';
 
 /**
  * 타이틀/스플래시 화면
- * 흐름: 로고 + 로딩바 채워짐 → PLAY 버튼 노출 → 클릭 시 게임 시작
+ * 흐름:
+ *   1) 배경(logo_bg.png) + 로딩바 표시
+ *   2) 로딩 완료 → 0.3초 간격으로 staggered pop-in:
+ *      타이틀(title.png) → 돼지(logo_character.png) → PLAY 버튼
+ *   3) PLAY 클릭 시 게임 시작
  */
 export class TitleScreen extends Container {
   private onPlayCallback?: () => void;
-  // 로고 — Container로 감싸서 staggered pop-in 적용
-  private logoContainer: Container;
-  private logoSprite?: Sprite;
-  private logoFallback?: Text;
-  private logoSubFallback?: Text;
-  // 타이틀 돼지 캐릭터
+  // 배경 (항상 보임)
+  private bgSprite?: Sprite;
+  // 타이틀 로고 텍스트 (pop-in)
+  private titleContainer: Container;
+  private titleSprite?: Sprite;
+  // 돼지 캐릭터 (pop-in)
   private titlePigContainer: Container;
   private titlePigSprite?: Sprite;
   // 로딩
@@ -35,47 +39,22 @@ export class TitleScreen extends Container {
   constructor() {
     super();
 
+    // 배경 fallback (이미지 로드 실패 시 단색)
     const bg = new Graphics()
       .rect(0, 0, GAME_WIDTH, GAME_HEIGHT)
       .fill({ color: COLORS.WARM_BEIGE });
     this.addChild(bg);
 
-    // 로고 컨테이너 (게임 중심에 위치, 초기엔 숨김 — 로딩 완료 후 pop-in)
-    this.logoContainer = new Container();
-    this.logoContainer.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
-    this.logoContainer.alpha = 0;
-    this.logoContainer.scale.set(0);
-    this.addChild(this.logoContainer);
+    // 타이틀 로고 컨테이너 (상단, 초기엔 숨김)
+    this.titleContainer = new Container();
+    this.titleContainer.position.set(GAME_WIDTH / 2, 240);
+    this.titleContainer.alpha = 0;
+    this.titleContainer.scale.set(0);
+    this.addChild(this.titleContainer);
 
-    // 로고 placeholder (logoContainer 내부에 (0,0) 기준)
-    this.logoFallback = new Text({
-      text: 'Hidden Hole',
-      style: {
-        fontSize: 180,
-        fill: COLORS.SUNSET_ORANGE,
-        fontWeight: 'bold',
-        stroke: { color: COLORS.DARK_CHARCOAL, width: 8 },
-      },
-    });
-    this.logoFallback.anchor.set(0.5);
-    this.logoFallback.position.set(0, -100);
-    this.logoContainer.addChild(this.logoFallback);
-
-    this.logoSubFallback = new Text({
-      text: '히든홀',
-      style: {
-        fontSize: 56,
-        fill: COLORS.DARK_CHARCOAL,
-        fontWeight: 'bold',
-      },
-    });
-    this.logoSubFallback.anchor.set(0.5);
-    this.logoSubFallback.position.set(0, 30);
-    this.logoContainer.addChild(this.logoSubFallback);
-
-    // 타이틀 돼지 컨테이너 (PLAY 버튼 위쪽, 초기엔 숨김)
+    // 돼지 캐릭터 컨테이너 (중앙, 초기엔 숨김)
     this.titlePigContainer = new Container();
-    this.titlePigContainer.position.set(GAME_WIDTH / 2, GAME_HEIGHT - 430);
+    this.titlePigContainer.position.set(GAME_WIDTH / 2, 650);
     this.titlePigContainer.alpha = 0;
     this.titlePigContainer.scale.set(0);
     this.addChild(this.titlePigContainer);
@@ -86,45 +65,50 @@ export class TitleScreen extends Container {
   }
 
   private async loadAssets(): Promise<void> {
-    // 로고 PNG 로드
-    let logoTex: Texture | undefined;
+    // 1. 배경 PNG (logo_bg.png) — 풀스크린 cover, 항상 보임
+    let bgTex: Texture | undefined;
     try {
-      logoTex = await Assets.load('/images/logo_main.png');
+      bgTex = await Assets.load('/images/logo_bg.png');
     } catch {}
-    if (logoTex && this.logoFallback && this.logoSubFallback) {
-      this.logoContainer.removeChild(this.logoFallback);
-      this.logoContainer.removeChild(this.logoSubFallback);
-      this.logoFallback.destroy();
-      this.logoSubFallback.destroy();
-      this.logoFallback = undefined;
-      this.logoSubFallback = undefined;
-
-      // 로고 — 풀스크린 cover (logoContainer는 GAME 중심에 있으므로 (0,0) 기준)
-      this.logoSprite = new Sprite(logoTex);
-      this.logoSprite.anchor.set(0.5);
-      const scaleX = GAME_WIDTH / logoTex.width;
-      const scaleY = GAME_HEIGHT / logoTex.height;
+    if (bgTex) {
+      this.bgSprite = new Sprite(bgTex);
+      this.bgSprite.anchor.set(0.5);
+      const scaleX = GAME_WIDTH / bgTex.width;
+      const scaleY = GAME_HEIGHT / bgTex.height;
       const scale = Math.max(scaleX, scaleY);
-      this.logoSprite.width = logoTex.width * scale;
-      this.logoSprite.height = logoTex.height * scale;
-      this.logoSprite.position.set(0, 0);
-      this.logoContainer.addChild(this.logoSprite);
+      this.bgSprite.width = bgTex.width * scale;
+      this.bgSprite.height = bgTex.height * scale;
+      this.bgSprite.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+      // 단색 fallback bg 위에, 다른 요소들 아래에
+      this.addChildAt(this.bgSprite, 1);
     }
 
-    // 타이틀 돼지 (pig.png 스프라이트시트 frame 0 — 닫힘)
+    // 2. 타이틀 로고 (title.png) — Hidden Hole 텍스트
+    let titleTex: Texture | undefined;
+    try {
+      titleTex = await Assets.load('/images/title.png');
+    } catch {}
+    if (titleTex) {
+      this.titleSprite = new Sprite(titleTex);
+      this.titleSprite.anchor.set(0.5);
+      const targetH = 320;
+      const aspect = titleTex.width / titleTex.height;
+      this.titleSprite.height = targetH;
+      this.titleSprite.width = targetH * aspect;
+      this.titleSprite.position.set(0, 0);
+      this.titleContainer.addChild(this.titleSprite);
+    }
+
+    // 3. 돼지 캐릭터 (logo_character.png) — 먼지털이개 들고 있는 돼지
     let pigTex: Texture | undefined;
     try {
-      pigTex = await Assets.load('/images/pig.png');
+      pigTex = await Assets.load('/images/logo_character.png');
     } catch {}
     if (pigTex) {
-      const frame0 = new Texture({
-        source: pigTex.source,
-        frame: new Rectangle(143, 113, 364, 418),
-      });
-      this.titlePigSprite = new Sprite(frame0);
+      this.titlePigSprite = new Sprite(pigTex);
       this.titlePigSprite.anchor.set(0.5);
-      const targetH = 280;
-      const aspect = 364 / 418;
+      const targetH = 480;
+      const aspect = pigTex.width / pigTex.height;
       this.titlePigSprite.height = targetH;
       this.titlePigSprite.width = targetH * aspect;
       this.titlePigSprite.position.set(0, 0);
@@ -287,8 +271,8 @@ export class TitleScreen extends Container {
   private showPlayButton(): void {
     // 1. 로딩바·텍스트 fade out
     this.fadeOutLoadingBar();
-    // 2. Staggered pop-in (0.3초 간격) — 로고 → 돼지 → PLAY 버튼
-    setTimeout(() => this.popIn(this.logoContainer), 200);
+    // 2. Staggered pop-in (0.3초 간격) — 타이틀 → 돼지 → PLAY 버튼
+    setTimeout(() => this.popIn(this.titleContainer), 200);
     setTimeout(() => this.popIn(this.titlePigContainer), 500);
     setTimeout(() => {
       if (this.btnContainer) {
