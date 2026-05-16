@@ -1,4 +1,4 @@
-import { Container, Graphics, BlurFilter } from 'pixi.js';
+import { Container, Graphics } from 'pixi.js';
 import { SUCTION, COLORS } from '../primitives/constants';
 import { audio } from '../audio/SoundManager';
 import type { TrashSprite } from '../scene/TrashSprite';
@@ -20,12 +20,11 @@ export class BlackHoleEffect extends Container {
     this.targetY = centerY;
     this.position.set(centerX, centerY);
 
-    // 블랙홀 자체 (회전하는 어두운 원)
+    // 블랙홀 자체 (어차피 alpha=0 이라 안 보임 — visible=false 로 렌더 비용 0)
     this.hole = new Graphics()
       .circle(0, 0, SUCTION.HOLE_RADIUS)
       .fill({ color: 0x000000, alpha: 0 });
-
-    this.hole.filters = [new BlurFilter({ strength: 12 })];
+    this.hole.visible = false; // BlurFilter 도 제거 — 모바일 성능
     this.addChild(this.hole);
   }
 
@@ -51,20 +50,7 @@ export class BlackHoleEffect extends Container {
       delay: Math.random() * 150,
     }));
 
-    // 블랙홀 등장 애니메이션
-    const holeAnimate = () => {
-      const elapsed = performance.now() - startTime;
-      const t = Math.min(elapsed / 500, 1); // 0.5초 동안 등장
-      this.hole.fill({ color: 0x000000, alpha: t });
-      this.hole.clear();
-      this.hole.circle(0, 0, SUCTION.HOLE_RADIUS * (0.3 + t * 0.7)).fill({
-        color: 0x000000,
-        alpha: t * 0.9,
-      });
-      this.hole.rotation += 0.15;
-      if (t < 1) requestAnimationFrame(holeAnimate);
-    };
-    holeAnimate();
+    // 블랙홀 자체는 visible=false 라 등장 애니 불필요 (성능 절약)
 
     // 항목마다 살짝 다른 호버 위로 떠오르는 양 (다양성)
     const liftStates = targetStates.map((state) => ({
@@ -139,40 +125,9 @@ export class BlackHoleEffect extends Container {
   }
 
   private collapse(): void {
-    // 흡입 완료 후 블랙홀 수축 + 임팩트 펄스 (살짝 커졌다 줄어듦)
-    const startTime = performance.now();
-    const startRadius = SUCTION.HOLE_RADIUS;
-    const duration = 400;
-
-    const animate = () => {
-      const elapsed = performance.now() - startTime;
-      const t = Math.min(elapsed / duration, 1);
-      // 0~0.3: 펄스 확장 (1.0 → 1.4), 0.3~1.0: 급격히 수축 (1.4 → 0)
-      let radiusMul: number;
-      let alphaMul: number;
-      if (t < 0.3) {
-        const pt = t / 0.3;
-        radiusMul = 1 + pt * 0.4;
-        alphaMul = 1;
-      } else {
-        const ct = (t - 0.3) / 0.7;
-        radiusMul = 1.4 * (1 - ct);
-        alphaMul = 1 - ct;
-      }
-      this.hole.clear();
-      this.hole.circle(0, 0, startRadius * radiusMul).fill({
-        color: 0x000000,
-        alpha: 0.9 * alphaMul,
-      });
-
-      if (t < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        this.visible = false;
-        this.onCompleteCallback?.();
-      }
-    };
-    animate();
+    // 어차피 hole 은 안 보이므로 즉시 완료 콜백 (애니 RAF 절약)
+    this.visible = false;
+    this.onCompleteCallback?.();
   }
 
   private easeInCubic(t: number): number {

@@ -208,12 +208,16 @@ async function main() {
 
   const app = new Application();
 
+  // 모바일 성능 최적화 — DPR 최대 1.5 로 캡핑
+  // 일부 안드로이드는 DPR 3+ → 거대 배경 텍스처 × 9배 렌더링 = 심각한 랙
+  // 1.5 면 텍스트/이모지 선명함 유지하면서 렌더 비용 절반 이하
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
   await app.init({
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
     backgroundColor: COLORS.BG_DARK,
-    antialias: true,
-    resolution: window.devicePixelRatio || 1,
+    antialias: false, // 모바일에선 antialias 비활성화 — fillrate 대폭 절약
+    resolution: dpr,
     autoDensity: true,
   });
 
