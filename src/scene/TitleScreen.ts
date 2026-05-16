@@ -46,19 +46,20 @@ export class TitleScreen extends Container {
     this.addChild(bg);
 
     // 원본 logo_main.png 의 1280x720 좌표를 1.5배 cover scale 로 게임 좌표 변환
-    // 타이틀 원본 중심 (640, 435) → (960, 653)
-    this.titleContainer = new Container();
-    this.titleContainer.position.set(960, 653);
-    this.titleContainer.alpha = 0;
-    this.titleContainer.scale.set(0);
-    this.addChild(this.titleContainer);
-
+    // 레이어 순서: 돼지 먼저(뒤) → 타이틀 나중(앞)
     // 돼지 원본 중심 (678, 319) → (1017, 479)
     this.titlePigContainer = new Container();
     this.titlePigContainer.position.set(1017, 479);
     this.titlePigContainer.alpha = 0;
     this.titlePigContainer.scale.set(0);
     this.addChild(this.titlePigContainer);
+
+    // 타이틀 원본 중심 (640, 435) → (960, 653)
+    this.titleContainer = new Container();
+    this.titleContainer.position.set(960, 653);
+    this.titleContainer.alpha = 0;
+    this.titleContainer.scale.set(0);
+    this.addChild(this.titleContainer);
 
     this.loadAssets();
     this.setupLoadingBar();
