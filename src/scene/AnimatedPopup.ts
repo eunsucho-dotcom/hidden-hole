@@ -1,5 +1,6 @@
 import { Container, Graphics, Sprite, Texture, Rectangle, AnimatedSprite, Assets, Text } from 'pixi.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../primitives/constants';
+import { t } from '../primitives/i18n';
 
 /**
  * 팝업 애니메이션 컴포넌트 — 25프레임 스프라이트시트(5×5) 기반 돼지 청소 모션
@@ -21,7 +22,7 @@ export class AnimatedPopup extends Container {
   private dismissed = false;
   private onDismissCallback?: () => void;
 
-  constructor(private title: string = '청소 준비 완료!', private subtitle: string = '탭해서 시작') {
+  constructor(private title: string = t('popup.title'), private subtitle: string = t('popup.subtitle')) {
     super();
 
     // 어두운 오버레이 (배경 클릭 차단)

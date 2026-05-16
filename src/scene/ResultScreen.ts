@@ -1,6 +1,7 @@
 import { Container, Graphics, Text, Sprite, Texture, Assets } from 'pixi.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../primitives/constants';
 import { audio } from '../audio/SoundManager';
+import { t, tBilingual } from '../primitives/i18n';
 import type { ResultData } from '../primitives/result-types';
 
 /**
@@ -41,7 +42,7 @@ export class ResultScreen extends Container {
 
     // 씬 이름
     const sceneName = new Text({
-      text: result.sceneTitle.ko,
+      text: tBilingual(result.sceneTitle),
       style: {
         fontSize: 32,
         fill: 0x666666,
@@ -60,7 +61,7 @@ export class ResultScreen extends Container {
 
     // 총점
     const totalLabel = new Text({
-      text: `TOTAL SCORE`,
+      text: t('result.total_score'),
       style: { fontSize: 24, fill: 0x888888, fontWeight: 'bold' },
     });
     totalLabel.anchor.set(0.5);
@@ -164,10 +165,10 @@ export class ResultScreen extends Container {
   private renderScoreBreakdown(result: ResultData): void {
     const baseY = GAME_HEIGHT / 2 + 30;
     const items = [
-      { label: '쓰레기 점수', value: result.baseScore },
-      { label: '시간 보너스', value: result.timeBonus },
-      { label: '콤보 보너스', value: result.comboBonus },
-      { label: '완벽 보너스', value: result.perfectBonus },
+      { label: t('result.score'), value: result.baseScore },
+      { label: t('result.time_bonus'), value: result.timeBonus },
+      { label: t('result.combo_bonus'), value: result.comboBonus },
+      { label: t('result.perfect_bonus'), value: result.perfectBonus },
     ];
 
     items.forEach((item, i) => {

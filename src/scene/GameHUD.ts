@@ -1,6 +1,7 @@
 import { Container, Graphics, Text, Sprite, Texture, Assets } from 'pixi.js';
 import { GAME_WIDTH, COLORS } from '../primitives/constants';
 import { audio } from '../audio/SoundManager';
+import { t } from '../primitives/i18n';
 
 /**
  * 게임 HUD — 상단 오버레이 (타이머, 점수, 활성화 카운터, 사운드 토글)
@@ -68,12 +69,12 @@ export class GameHUD extends Container {
     this.loadHudIcon('/images/hud_score.png', 58, 45, '🪙', GAME_WIDTH - 330);
 
     // 스킬 슬롯 (우하단) — 현재 비활성 (visible=false). 필요 시 true로 변경
-    this.skill1Slot = this.createSkillSlot('🌀', '오기 발동', 'LOCKED', 0);
+    this.skill1Slot = this.createSkillSlot('🌀', t('hud.skill_eok.label'), 'LOCKED', 0);
     this.skill1Slot.position.set(GAME_WIDTH - 280, 920);
     this.skill1Slot.visible = false;
     this.addChild(this.skill1Slot);
 
-    this.skill2Slot = this.createSkillSlot('🧨', '즉시 클리어', 'LOCKED', 1);
+    this.skill2Slot = this.createSkillSlot('🧨', t('hud.skill_clear.label'), 'LOCKED', 1);
     this.skill2Slot.position.set(GAME_WIDTH - 140, 920);
     this.skill2Slot.visible = false;
     this.addChild(this.skill2Slot);
@@ -179,7 +180,7 @@ export class GameHUD extends Container {
     slot.destroy({ children: true });
     const newSlot = this.createSkillSlot(
       slotIndex === 0 ? '🌀' : '🧨',
-      slotIndex === 0 ? '오기 발동' : '즉시 클리어',
+      slotIndex === 0 ? t('hud.skill_eok.label') : t('hud.skill_clear.label'),
       status,
       slotIndex,
     );
@@ -251,7 +252,7 @@ export class GameHUD extends Container {
         c.addChild(lockSprite);
       }).catch(() => {});
       // 잠금 해제 조건 표시 (예: "5장 클리어")
-      const conditions = ['5장 클리어', '제한시간 내\n10장 클리어'];
+      const conditions = [t('hud.skill_eok.cond'), t('hud.skill_clear.cond')];
       const condIdx = slotIndex ?? 0;
       const conditionText = new Text({
         text: conditions[condIdx] || '',

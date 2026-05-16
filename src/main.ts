@@ -4,6 +4,7 @@ import { SplitScene } from './scene/SplitScene';
 import { TitleScreen } from './scene/TitleScreen';
 import { ResultScreen } from './scene/ResultScreen';
 import { AnimatedPopup } from './scene/AnimatedPopup';
+import { t } from './primitives/i18n';
 import { LV1_DEMO } from './data/lv1-demo';
 import { LV2_DEMO } from './data/lv2-demo';
 import { audio, initializeSounds } from './audio/SoundManager';
@@ -84,7 +85,7 @@ class Game {
       if (e.code === 'Digit1') this.showLevel(LV1_DEMO);
       else if (e.code === 'Digit2') this.showLevel(LV2_DEMO);
       else if (e.code === 'Digit3') {
-        const popup = new AnimatedPopup('청소 준비 완료!', '탭해서 닫기');
+        const popup = new AnimatedPopup(t('popup.title'), t('popup.subtitle'));
         this.root.addChild(popup);
       }
     };
