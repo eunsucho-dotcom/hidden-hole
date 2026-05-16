@@ -387,6 +387,9 @@ class CategorySlot extends Container {
         style: { fontSize: iconBox * 0.7, fontFamily: FONT_FAMILY },
       });
       this.icon.anchor.set(0.5);
+      // setIconTexture 가 곧 호출되면 그때까지 이모지 placeholder 숨김
+      // (실제 PNG 가 들어오기 전 이모지가 잠깐 보였다가 바뀌는 깜빡임 방지)
+      if (!mystery) this.iconContainer.alpha = 0;
     }
     this.iconContainer.addChild(this.icon);
 
@@ -698,5 +701,7 @@ class CategorySlot extends Container {
     sprite.height = texture.height * scale;
     this.icon = sprite;
     this.iconContainer.addChild(this.icon);
+    // 텍스처 들어왔으므로 컨테이너 보이게 (이모지 placeholder 숨김 해제)
+    this.iconContainer.alpha = 1;
   }
 }
