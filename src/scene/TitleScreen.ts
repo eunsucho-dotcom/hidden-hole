@@ -271,15 +271,15 @@ export class TitleScreen extends Container {
   private showPlayButton(): void {
     // 1. 로딩바·텍스트 fade out
     this.fadeOutLoadingBar();
-    // 2. Staggered pop-in (0.3초 간격) — 타이틀 → 돼지 → PLAY 버튼
-    setTimeout(() => this.popIn(this.titleContainer), 200);
-    setTimeout(() => this.popIn(this.titlePigContainer), 500);
+    // 2. Staggered pop-in (180ms 간격) — 타이틀 → 돼지 → PLAY 버튼
+    setTimeout(() => this.popIn(this.titleContainer), 120);
+    setTimeout(() => this.popIn(this.titlePigContainer), 300);
     setTimeout(() => {
       if (this.btnContainer) {
         this.btnContainer.visible = true;
         this.popIn(this.btnContainer);
       }
-    }, 800);
+    }, 480);
   }
 
   private fadeOutLoadingBar(): void {
@@ -300,17 +300,17 @@ export class TitleScreen extends Container {
     animate();
   }
 
-  /** pop-in 애니메이션 — scale 0→1.0 (살짝 오버슛) + alpha 0→1 */
-  private popIn(target: Container, durationMs: number = 360): void {
+  /** pop-in 애니메이션 — scale 0→1.0 (강한 오버슛으로 뽕!) + alpha 0→1 */
+  private popIn(target: Container, durationMs: number = 260): void {
     target.visible = true;
     const startTime = performance.now();
-    const c1 = 1.70158;
+    // easeOutBack — overshoot 강도 크게 (귀엽게 통! 튀는 느낌)
+    const c1 = 2.7;
     const c3 = c1 + 1;
     const animate = () => {
       const t = Math.min((performance.now() - startTime) / durationMs, 1);
-      // easeOutBack — 1.0 살짝 넘었다가 안착
       const eased = 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-      target.alpha = Math.min(1, t * 1.8);
+      target.alpha = Math.min(1, t * 2.2);
       target.scale.set(eased);
       if (t < 1) requestAnimationFrame(animate);
       else {
