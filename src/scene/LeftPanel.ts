@@ -51,13 +51,13 @@ export class LeftPanel extends Container {
   private viewportHeight = 0;
   private onCategoryActivatedCallback?: (category: string) => void;
 
-  constructor(allCategories: CategoryInfo[]) {
+  constructor(allCategories: CategoryInfo[], bgColor: number = 0xefb63a) {
     super();
 
-    // 노란 패널 배경 — 게임 배경(bg_lv1_clean)의 노란 테두리 색과 동일
+    // 패널 배경 — 씬 가장자리 색과 동일 (기본 노란, lv3 = 초록 등)
     this.backgroundPanel = new Graphics()
       .rect(0, 0, LEFT_PANEL_WIDTH, GAME_HEIGHT)
-      .fill({ color: 0xefb63a });
+      .fill({ color: bgColor });
     this.addChild(this.backgroundPanel);
 
     // 슬롯 컨테이너 (스크롤됨)

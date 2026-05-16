@@ -100,4 +100,6 @@ export const LV3_DEMO: SceneData = {
     size: 200,
   },
   contentShiftX: -180,
+  // 방 이미지 가장자리 색과 동일 (#0fb97e — 초록)
+  bgEdgeColor: 0x0fb97e,
 };

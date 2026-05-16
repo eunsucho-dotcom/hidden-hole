@@ -55,6 +55,8 @@ export interface SceneData {
   };
   // 콘텐츠 X 시프트 — 배경 좌측 노란 여백이 너무 크면 음수로 좌측 이동
   contentShiftX?: number;
+  // 좌측 패널 / 씬 여백 배경 색 — 방 이미지 가장자리 색과 매칭 (생략 시 노란 0xefb63a)
+  bgEdgeColor?: number;
 }
 
 export type GamePhase = 'preview' | 'playing' | 'sucking' | 'reveal' | 'result';

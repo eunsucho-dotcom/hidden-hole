@@ -81,7 +81,8 @@ export class SplitScene extends Container {
       });
     }
     this.totalCategories = categories.length;
-    this.leftPanel = new LeftPanel(categories);
+    const bgEdgeColor = sceneData.bgEdgeColor ?? 0xefb63a;
+    this.leftPanel = new LeftPanel(categories, bgEdgeColor);
     this.addChild(this.leftPanel);
 
     // 카테고리 데이터 보관 (숨은 카테고리 동적 추가용)
@@ -99,11 +100,11 @@ export class SplitScene extends Container {
       .fill(0xffffff);
     sceneWrapper.addChild(sceneMask);
     sceneWrapper.mask = sceneMask;
-    // 노란 배경 fill — 콘텐츠 시프트 후 빈공간을 좌측 패널 색과 통일
-    const yellowFill = new Graphics()
+    // 가장자리 배경 fill — 콘텐츠 시프트 후 빈공간을 좌측 패널 색과 통일
+    const edgeFill = new Graphics()
       .rect(0, 0, SCENE_AREA_WIDTH, GAME_HEIGHT)
-      .fill(0xefb63a);
-    sceneWrapper.addChild(yellowFill);
+      .fill(bgEdgeColor);
+    sceneWrapper.addChild(edgeFill);
     // 실제 콘텐츠 컨테이너 — sceneData.contentShiftX 만큼 좌우 시프트
     this.sceneContainer = new Container();
     this.sceneContainer.x = sceneData.contentShiftX ?? 0;
