@@ -131,7 +131,8 @@ export class ResultScreen extends Container {
       emptyTex = await Assets.load('./images/star_empty.png');
     } catch {}
     try {
-      bigFilledTex = await Assets.load('./images/star_big.png');
+      // 가운데 별 전용 큰 이미지 (205x195 고해상도)
+      bigFilledTex = await Assets.load('./images/big-star_filled.png');
     } catch {}
 
     starConfigs.forEach((cfg, i) => {
@@ -259,13 +260,11 @@ export class ResultScreen extends Container {
     return btn;
   }
 
-  /** popup_bg 우상단 모서리에 X 닫기 버튼 — 클릭 시 home, 드래그로 위치 조정, localStorage 에 저장 */
+  /** popup_bg 우상단 모서리에 X 닫기 버튼 — 위치 고정, 클릭=닫기 */
   private renderCloseButton(): void {
-    // localStorage 에 저장된 위치 있으면 그거 사용, 없으면 기본값
     const btn = new Container();
-    const savedX = parseFloat(localStorage.getItem('closeBtnX') ?? '1410');
-    const savedY = parseFloat(localStorage.getItem('closeBtnY') ?? '35');
-    btn.position.set(savedX, savedY);
+    // 고정 위치 — 패널 우상단 모서리
+    btn.position.set(1395, 55);
     const SIZE = 90;
     Assets.load('./images/popup_x.png')
       .then((tex: Texture) => {
@@ -286,51 +285,9 @@ export class ResultScreen extends Container {
       });
     btn.eventMode = 'static';
     btn.cursor = 'pointer';
-
-    // 드래그 상태
-    let isDragging = false;
-    let dragMoved = false;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
-
-    btn.on('pointerdown', (e) => {
-      isDragging = true;
-      dragMoved = false;
-      const pos = e.getLocalPosition(this);
-      dragOffsetX = btn.x - pos.x;
-      dragOffsetY = btn.y - pos.y;
-      btn.cursor = 'grabbing';
-    });
-    btn.on('globalpointermove', (e) => {
-      if (!isDragging) return;
-      dragMoved = true;
-      const pos = e.getLocalPosition(this);
-      btn.position.set(Math.round(pos.x + dragOffsetX), Math.round(pos.y + dragOffsetY));
-    });
-    const endDrag = () => {
-      if (!isDragging) return;
-      isDragging = false;
-      btn.cursor = 'pointer';
-      if (dragMoved) {
-        const x = Math.round(btn.x);
-        const y = Math.round(btn.y);
-        // 새 위치를 localStorage 에 저장 → 페이지 새로고침해도 유지
-        localStorage.setItem('closeBtnX', String(x));
-        localStorage.setItem('closeBtnY', String(y));
-        console.log(`%c📍 X 위치 저장됨: (${x}, ${y})`, 'color:#ff9f68;font-weight:bold;font-size:14px');
-      }
-    };
-    btn.on('pointerup', endDrag);
-    btn.on('pointerupoutside', endDrag);
-
-    btn.on('pointerover', () => {
-      if (!isDragging) btn.scale.set(1.12);
-    });
-    btn.on('pointerout', () => {
-      if (!isDragging) btn.scale.set(1);
-    });
+    btn.on('pointerover', () => btn.scale.set(1.12));
+    btn.on('pointerout', () => btn.scale.set(1));
     btn.on('pointertap', () => {
-      if (dragMoved) return; // 드래그였으면 닫기 무시
       audio.play('button');
       this.onHomeCallback?.();
     });
