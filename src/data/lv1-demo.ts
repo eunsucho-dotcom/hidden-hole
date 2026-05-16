@@ -45,12 +45,7 @@ const CATEGORIES: CategorySpec[] = [
     ] },
 
   { category: 'crumbs', label: '과자부스러기', emoji: '✨', defaultSize: { w: 30, h: 30 }, variants: 6,
-    instances: [
-      { x: 938, y: 831, w: 96, h: 47, z: 60 },
-      { x: 547, y: 834, w: 58, h: 50, z: 0 },
-      { x: 496, y: 864, w: 52, h: 29, z: 1 },
-      { x: 1115, y: 741, w: 65, h: 50, z: 54 },
-    ] },
+    instances: [] },
 
   { category: 'tissueroll', label: '두루마리휴지', emoji: '🧻', defaultSize: { w: 120, h: 90 },
     instances: [
