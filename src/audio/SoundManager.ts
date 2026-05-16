@@ -139,7 +139,7 @@ export function initializeSounds(): void {
   audio.register('click_paper_towel', './sounds/sfx_click_paper_towel.mp3', { volume: 1.0 });
   audio.register('click_crumple', './sounds/sfx_click_crumple.mp3', { volume: 1.0 });
   audio.register('category_complete', './sounds/sfx_category_complete.mp3', { volume: 1.0 });
-  audio.register('pig_open', './sounds/sfx_pig_open.mp3', { volume: 0.9 });
+  audio.register('pig_open', './sounds/sfx_pig_open.mp3', { volume: 0.4 });
 
   // 인터랙션 SFX — ASMR 강조를 위해 볼륨 최대치
   audio.register('drag_start', './sounds/sfx_drag_start.mp3', { volume: 1.0 });
