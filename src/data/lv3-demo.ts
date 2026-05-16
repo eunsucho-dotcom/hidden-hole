@@ -99,8 +99,8 @@ export const LV3_DEMO: SceneData = {
     position: { x: 425, y: 758 },
     size: 200,
   },
-  // 좌측 패널 ↔ 방 사이 초록 여백 최소화 (방 콘텐츠 좌측 정렬)
-  contentShiftX: -260,
+  // 방 콘텐츠 중앙쪽으로 (이전 -260 은 너무 좌측)
+  contentShiftX: -100,
   // 방 이미지 가장자리 색과 동일 (#0fb97e — 초록)
   bgEdgeColor: 0x0fb97e,
 };

@@ -109,10 +109,11 @@ export class ResultScreen extends Container {
   }
 
   private async renderStars(stars: number): Promise<void> {
-    // 별 사이즈 — 좌/우 420, 가운데 500
+    // 별 사이즈 — 좌/우 420, 가운데 750 (가운데 1.5x)
+    // 가운데 별이 크니까 y 도 약간 아래로 옮겨 화면 위로 잘리지 않게
     const starConfigs = [
       { x: 510 + 189 * 1.42, y: 20.7 + 203 * 1.42, size: 420 },
-      { x: 510 + 317 * 1.42, y: 20.7 + 177 * 1.42, size: 500 },
+      { x: GAME_WIDTH / 2,    y: 400,                size: 750 },
       { x: 510 + 435 * 1.42, y: 20.7 + 200 * 1.42, size: 420 },
     ];
 
@@ -147,7 +148,8 @@ export class ResultScreen extends Container {
       }
       star.position.set(cfg.x, cfg.y);
       star.scale.set(0);
-      this.addChild(star);
+      // 별을 패널 바로 위에, 텍스트 아래에 (index 2 = panel 다음)
+      this.addChildAt(star, Math.min(2, this.children.length));
 
       // 별 등장 애니메이션 (순차) — 채워진 별만 사운드
       const delay = 200 + i * 200;
@@ -248,11 +250,11 @@ export class ResultScreen extends Container {
 
   /** popup_bg 우상단 모서리에 X 닫기 버튼 — 클릭 시 home 동작 */
   private renderCloseButton(): void {
-    // 패널: 표시 900×879, 중앙 (960, 460), 우상단 ≈ (1410, 21)
-    // X는 모서리 안쪽으로 살짝 (1370, 65)
+    // 패널: 표시 900×879, 중앙 (960, 460), 우상단 모서리 (1410, 20)
+    // X 버튼은 모서리에 살짝 걸치게 (반쯤 밖)
     const btn = new Container();
-    btn.position.set(1370, 65);
-    const SIZE = 80;
+    btn.position.set(1410, 35);
+    const SIZE = 90;
     Assets.load('./images/popup_x.png')
       .then((tex: Texture) => {
         const sprite = new Sprite(tex);
