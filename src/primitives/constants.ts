@@ -13,8 +13,8 @@ export const SCENE_AREA_WIDTH = GAME_WIDTH - LEFT_PANEL_WIDTH;
 export const BG_NATIVE_WIDTH = GAME_WIDTH - 180; // 1740
 
 // 아이템 슬롯 크기 (1열, 크게)
-export const ITEM_SLOT_SIZE = 144;
-// active 슬롯이 1.2배 확대되므로 간격을 넉넉히
+export const ITEM_SLOT_SIZE = 160;
+// active 슬롯이 1.26배 확대되므로 간격을 넉넉히
 export const ITEM_SLOT_GAP = 28;
 export const PANEL_COLUMNS = 1;
 // 패널 스크롤 영역 시작 y — 상단 타이머 바(70px) 아래

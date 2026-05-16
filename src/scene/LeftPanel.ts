@@ -11,7 +11,7 @@ import {
 
 // ====== 사용자 조절 가능한 슬롯 디자인 파라미터 ======
 // 아이콘 크기 비율 (0.4 ~ 0.85 추천). 키울수록 카운터 숫자와 가까워짐
-const ICON_SIZE_RATIO = 0.6;
+const ICON_SIZE_RATIO = 0.66;
 // 피자(가로로 긴) 카테고리만 따로 크게
 const ICON_SIZE_RATIO_PIZZA = 0.85;
 // 카운터 숫자 폰트 사이즈 (이전 18 → 36으로 2배)
@@ -71,7 +71,7 @@ export class LeftPanel extends Container {
     const slotRow = ITEM_SLOT_SIZE + ITEM_SLOT_GAP;
     const available = GAME_HEIGHT - PANEL_SCROLL_TOP - SLOT_TOP_PADDING + ITEM_SLOT_GAP;
     const fullSlotsVisible = Math.floor(available / slotRow);
-    this.viewportHeight = SLOT_TOP_PADDING + fullSlotsVisible * slotRow - ITEM_SLOT_GAP + 16;
+    this.viewportHeight = SLOT_TOP_PADDING + fullSlotsVisible * slotRow - ITEM_SLOT_GAP + 24;
     this.scrollMask = new Graphics()
       .rect(0, PANEL_SCROLL_TOP, LEFT_PANEL_WIDTH, this.viewportHeight)
       .fill({ color: 0xffffff });
@@ -235,7 +235,7 @@ export class LeftPanel extends Container {
     const slotTopY = slot.y - ITEM_SLOT_SIZE / 2;
     // 화면 안에 이미 보이면 스크롤 안 함
     const visibleStart = this.scrollY + SLOT_TOP_PADDING;
-    const visibleEnd = this.scrollY + this.viewportHeight - 16;
+    const visibleEnd = this.scrollY + this.viewportHeight - 24;
     if (slotTopY >= visibleStart && slotTopY + ITEM_SLOT_SIZE <= visibleEnd) return;
     // 슬롯 단위로 스냅된 스크롤 위치 계산
     const desired = slotTopY - SLOT_TOP_PADDING;
@@ -507,10 +507,10 @@ class CategorySlot extends Container {
   }
 
   /**
-   * 슬롯의 평상시 스케일 — active만 1.2배로 강조
+   * 슬롯의 평상시 스케일 — active만 1.26배로 강조
    */
   private get restScale(): number {
-    return this.state === 'active' && !this.mystery ? 1.2 : 1.0;
+    return this.state === 'active' && !this.mystery ? 1.26 : 1.0;
   }
 
   private applyStateVisual(): void {
@@ -546,10 +546,16 @@ class CategorySlot extends Container {
       } else if (this.state === 'locked') {
         this.bgSprite!.tint = 0xb8b8b8; // 회색조 (꺼진 느낌)
       } else if (this.state === 'active') {
-        this.bgSprite!.tint = 0xffffff; // 원본 + 외곽 링 추가
-        this.activeRing = new Graphics()
-          .roundRect(-3, -3, ITEM_SLOT_SIZE + 6, ITEM_SLOT_SIZE + 6, 22)
-          .stroke({ color: COLORS.SUNSET_ORANGE, width: 5 });
+        this.bgSprite!.tint = 0xffffff; // 원본 + 외곽 글로우 추가
+        // 부드러운 주황 글로우 — 4겹 레이어드 (바깥일수록 옅어짐)
+        this.activeRing = new Graphics();
+        for (let i = 4; i >= 1; i--) {
+          const exp = i * 7;
+          this.activeRing
+            .roundRect(-exp, -exp, ITEM_SLOT_SIZE + exp * 2, ITEM_SLOT_SIZE + exp * 2, 22 + exp)
+            .fill({ color: COLORS.SUNSET_ORANGE, alpha: 0.13 });
+        }
+        // 슬롯 bg 뒤에 (addChildAt 0)
         this.addChildAt(this.activeRing, 0);
       } else {
         this.bgSprite!.tint = 0xffd8a8; // 오렌지 틴트 (완료)
