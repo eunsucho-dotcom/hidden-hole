@@ -149,7 +149,7 @@ export function initializeSounds(): void {
   audio.register('pop', './sounds/sfx_pop.mp3', { volume: 1.0 });
 
   // 블랙홀 흡입 시퀀스 (5단계)
-  audio.register('blackhole_start', './sounds/sfx_blackhole_start.mp3');
+  audio.register('blackhole_start', './sounds/sfx_blackhole_start.mp3', { volume: 0.5 });
   audio.register('blackhole_main', './sounds/sfx_blackhole_main.mp3');
   audio.register('blackhole_climax', './sounds/sfx_blackhole_climax.mp3');
   audio.register('clean_reveal', './sounds/sfx_clean_reveal.mp3');
