@@ -37,8 +37,8 @@ export class GameHUD extends Container {
     this.addChild(this.timerText);
     this.loadHudIcon('./images/hud_timer.png', 64, 45, '⏱', 70);
 
-    // 점수 패널 배경 (우상단, 사운드 토글과 겹치지 않게 왼쪽으로)
-    this.loadHudPanel(GAME_WIDTH - 380, 12, 260, 64);
+    // 점수 패널 배경 (우상단, 사운드 토글과 겹치지 않게 왼쪽으로 이동 — 폭 240)
+    this.loadHudPanel(GAME_WIDTH - 420, 12, 240, 64);
 
     // 활성화 카운터 (중) — 숨김 (사용자 요청)
     this.statusText = new Text({
@@ -64,10 +64,10 @@ export class GameHUD extends Container {
       },
     });
     this.scoreText.anchor.set(1, 0);
-    this.scoreText.position.set(GAME_WIDTH - 200, 28);
+    this.scoreText.position.set(GAME_WIDTH - 240, 28);
     this.addChild(this.scoreText);
     // 점수 아이콘 — 숫자 좌측에 위치 (점수가 길어져도 아이콘은 고정)
-    this.loadHudIcon('./images/hud_score.png', 58, 45, '🪙', GAME_WIDTH - 330);
+    this.loadHudIcon('./images/hud_score.png', 58, 45, '🪙', GAME_WIDTH - 370);
 
     // 스킬 슬롯 (우하단) — 현재 비활성 (visible=false). 필요 시 true로 변경
     this.skill1Slot = this.createSkillSlot('🌀', t('hud.skill_eok.label'), 'LOCKED', 0);
@@ -80,9 +80,9 @@ export class GameHUD extends Container {
     this.skill2Slot.visible = false;
     this.addChild(this.skill2Slot);
 
-    // 사운드 토글 — 1.5x 크기, 살짝 아래
+    // 사운드 토글 — 1.5x 크기 (위치: 왼쪽 10 + 아래 10 추가)
     this.soundToggle = this.createSoundToggle();
-    this.soundToggle.position.set(GAME_WIDTH - 75, 70);
+    this.soundToggle.position.set(GAME_WIDTH - 85, 80);
     this.addChild(this.soundToggle);
   }
 

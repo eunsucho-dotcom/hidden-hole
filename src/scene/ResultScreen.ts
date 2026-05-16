@@ -109,13 +109,12 @@ export class ResultScreen extends Container {
   }
 
   private async renderStars(stars: number): Promise<void> {
-    // popup_bg 의 별 위치/크기 정확히 매칭 (네이티브 측정 후 1.42x scale)
-    // 네이티브: L=(189,203,110), M=(307,177,135), R=(435,200,110)
-    // 표시 = 1.4196배, 패널 중앙 (960, 460), top-left (510, 20.7)
+    // popup_bg 별 외곽선 포함 측정: 좌/우 ~140 native, 가운데 ~165 native
+    // 1.42x scale → 좌/우 200, 가운데 235 (외곽까지 풀 매칭)
     const starConfigs = [
-      { x: 510 + 189 * 1.42, y: 20.7 + 203 * 1.42, size: 156 },
-      { x: 510 + 317 * 1.42, y: 20.7 + 177 * 1.42, size: 192 },
-      { x: 510 + 435 * 1.42, y: 20.7 + 200 * 1.42, size: 156 },
+      { x: 510 + 189 * 1.42, y: 20.7 + 203 * 1.42, size: 200 },
+      { x: 510 + 317 * 1.42, y: 20.7 + 177 * 1.42, size: 240 },
+      { x: 510 + 435 * 1.42, y: 20.7 + 200 * 1.42, size: 200 },
     ];
 
     // PNG 자산 로드 (실패 시 이모지 fallback)

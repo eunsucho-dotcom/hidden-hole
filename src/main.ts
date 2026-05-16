@@ -7,6 +7,7 @@ import { AnimatedPopup } from './scene/AnimatedPopup';
 import { t } from './primitives/i18n';
 import { LV1_DEMO } from './data/lv1-demo';
 import { LV2_DEMO } from './data/lv2-demo';
+import { LV3_DEMO } from './data/lv3-demo';
 import { audio, initializeSounds } from './audio/SoundManager';
 import type { SceneData } from './primitives/types';
 
@@ -66,6 +67,7 @@ class Game {
    */
   private getNextLevel(currentId: string): SceneData | null {
     if (currentId === 'lv1') return LV2_DEMO;
+    if (currentId === 'lv2') return LV3_DEMO;
     return null;
   }
 
@@ -76,7 +78,7 @@ class Game {
     this.root.addChild(title);
     this.currentScene = title;
 
-    // 타이틀 화면에서 키보드 1/2 누르면 Lv1/Lv2 직접 시작, 3 누르면 팝업 애니 테스트
+    // 타이틀 화면에서 키보드 1/2/3 = Lv1/Lv2/Lv3, 4 = 결과 미리보기, 5 = 팝업 애니
     const keyHandler = (e: KeyboardEvent) => {
       if (this.currentScene !== title) {
         window.removeEventListener('keydown', keyHandler);
@@ -84,7 +86,8 @@ class Game {
       }
       if (e.code === 'Digit1') this.showLevel(LV1_DEMO);
       else if (e.code === 'Digit2') this.showLevel(LV2_DEMO);
-      else if (e.code === 'Digit3') {
+      else if (e.code === 'Digit3') this.showLevel(LV3_DEMO);
+      else if (e.code === 'Digit5') {
         const popup = new AnimatedPopup(t('popup.title'), t('popup.subtitle'));
         this.root.addChild(popup);
       }
