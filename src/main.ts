@@ -116,6 +116,7 @@ class Game {
         };
         preview.onRetry(cleanup);
         preview.onHome(cleanup);
+        preview.onNext(cleanup);
         this.root.addChild(preview);
         // 3초 후 자동 닫기 (실제 게임과 동일)
         window.setTimeout(cleanup, 3000);
@@ -151,7 +152,7 @@ class Game {
         if (resultScreen.parent) this.root.removeChild(resultScreen);
         resultScreen.destroy({ children: true });
       };
-      // 재시작 = 같은 레벨 replay (다음 레벨 있으면 자동 진행이 처리)
+      // 재시작 = 같은 레벨 replay
       resultScreen.onRetry(() => {
         cleanupResult();
         this.showLevel(data);
@@ -159,6 +160,12 @@ class Game {
       resultScreen.onHome(() => {
         cleanupResult();
         this.showTitle();
+      });
+      // NEXT 버튼 = 다음 레벨 있으면 그쪽으로, 마지막이면 타이틀로 (자동 3초와 동일)
+      resultScreen.onNext(() => {
+        cleanupResult();
+        if (nextLevel) this.showLevel(nextLevel);
+        else this.showTitle();
       });
       this.root.addChild(resultScreen);
       // 3초 후 자동 진행 — 다음 레벨 있으면 그쪽으로, 마지막이면 타이틀로

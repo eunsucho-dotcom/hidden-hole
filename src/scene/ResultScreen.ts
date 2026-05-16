@@ -5,11 +5,12 @@ import { t } from '../primitives/i18n';
 import type { ResultData } from '../primitives/result-types';
 
 /**
- * 결과 화면 — 점수 + 별점 + Retry/Home 버튼
+ * 결과 화면 — 점수 + 별점 + NEXT 버튼
  */
 export class ResultScreen extends Container {
   private onRetryCallback?: () => void;
   private onHomeCallback?: () => void;
+  private onNextCallback?: () => void;
 
   constructor(result: ResultData) {
     super();
@@ -21,8 +22,8 @@ export class ResultScreen extends Container {
     this.addChild(overlay);
 
     // 결과 패널 PNG (popup_bg.png — 나무 카드 + 별 자리)
-    // 표시 900×879, 중앙 (960, 460) — 화면 중앙보다 80px 위
-    const PANEL_CY = 460;
+    // 표시 900×879, 중앙 (960, 420) — 전체 위로 40px 이동
+    const PANEL_CY = 420;
     const panelFallback = new Graphics()
       .roundRect(GAME_WIDTH / 2 - 450, PANEL_CY - 440, 900, 879, 30)
       .fill({ color: COLORS.CREAM_WHITE })
@@ -48,13 +49,13 @@ export class ResultScreen extends Container {
     // 점수 상세
     this.renderScoreBreakdown(result);
 
-    // 총점 라벨
+    // 총점 라벨 (패널 위로 40 이동에 맞춰 y 도 위로)
     const totalLabel = new Text({
       text: t('result.total_score'),
       style: { fontSize: 26, fill: 0x8a6a4a, fontWeight: 'bold' },
     });
     totalLabel.anchor.set(0.5);
-    totalLabel.position.set(GAME_WIDTH / 2, 595);
+    totalLabel.position.set(GAME_WIDTH / 2, 555);
     this.addChild(totalLabel);
 
     const totalScore = new Text({
@@ -67,20 +68,14 @@ export class ResultScreen extends Container {
       },
     });
     totalScore.anchor.set(0.5);
-    totalScore.position.set(GAME_WIDTH / 2, 665);
+    totalScore.position.set(GAME_WIDTH / 2, 625);
     this.addChild(totalScore);
 
-    // 버튼 2개 — 패널 안쪽 (총점 아래)
-    this.renderButton('🔄', './images/btn_retry.png', GAME_WIDTH / 2 - 130, 790, () => {
+    // NEXT 버튼 — 하단 가운데
+    this.renderButton('▶', './images/next_button.png', GAME_WIDTH / 2, 760, () => {
       audio.play('button');
-      this.onRetryCallback?.();
-    });
-    this.renderButton('🏠', './images/btn_home.png', GAME_WIDTH / 2 + 130, 790, () => {
-      audio.play('button');
-      this.onHomeCallback?.();
-    });
-
-    // X 버튼 제거됨 — 3초 후 자동 진행 (main.ts 에서 처리)
+      this.onNextCallback?.();
+    }, 240);
 
     // 등장 애니메이션
     this.alpha = 0;
@@ -96,10 +91,11 @@ export class ResultScreen extends Container {
 
   private async renderStars(stars: number): Promise<void> {
     // 가운데 별 — 양쪽보다 약간 위 + 사이즈 2x (1500)
-    const SIDE_Y = 350;
+    // 패널 위로 40 이동에 맞춰 y 도 위로
+    const SIDE_Y = 310;
     const SIDE_SIZE = 420;
-    const CENTER_Y = 280;     // 좌우보다 70px 위
-    const CENTER_SIZE = 1500; // 좌우 대비 ~3.5x, 직전 750 의 2x
+    const CENTER_Y = 240;     // 좌우보다 70px 위
+    const CENTER_SIZE = 1500;
     const starConfigs = [
       { x: 510 + 189 * 1.42, y: SIDE_Y,   size: SIDE_SIZE },
       { x: GAME_WIDTH / 2,    y: CENTER_Y, size: CENTER_SIZE },
@@ -169,8 +165,8 @@ export class ResultScreen extends Container {
   }
 
   private renderScoreBreakdown(result: ResultData): void {
-    // 씬 이름 아래, 총점 위
-    const baseY = 480;
+    // 씬 이름 아래, 총점 위 — 패널 위로 40 이동에 맞춰
+    const baseY = 440;
     const items = [
       { label: t('result.score'), value: result.baseScore },
       { label: t('result.time_bonus'), value: result.timeBonus },
@@ -204,13 +200,14 @@ export class ResultScreen extends Container {
     texturePath: string,
     x: number,
     y: number,
-    onClick: () => void
+    onClick: () => void,
+    sizeOverride?: number,
   ): Container {
     const btn = new Container();
     btn.position.set(x, y);
 
     // PNG 로드 시도 — 실패 시 이모지 fallback
-    const ICON_SIZE = 120;
+    const ICON_SIZE = sizeOverride ?? 120;
     let placeholder: Text | null = new Text({
       text: fallbackEmoji,
       style: { fontSize: 80 },
@@ -252,5 +249,9 @@ export class ResultScreen extends Container {
 
   onHome(callback: () => void): void {
     this.onHomeCallback = callback;
+  }
+
+  onNext(callback: () => void): void {
+    this.onNextCallback = callback;
   }
 }
