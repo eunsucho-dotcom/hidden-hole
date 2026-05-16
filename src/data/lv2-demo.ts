@@ -214,4 +214,6 @@ export const LV2_DEMO: SceneData = {
   },
   // 패널 폭 240으로 넓어진 만큼 추가 좌측 보정 (-120 → -180)
   contentShiftX: -180,
+  // 방 이미지 가장자리 색 매칭 (#b046d3 — 보라)
+  bgEdgeColor: 0xb046d3,
 };
