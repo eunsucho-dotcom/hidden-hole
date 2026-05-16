@@ -562,15 +562,16 @@ export class SplitScene extends Container {
   }
 
   private setupBackground(messyTex?: Texture): void {
+    const bgW = this.sceneData.bgDisplayWidth ?? BG_NATIVE_WIDTH;
     if (messyTex) {
       this.sceneBackground = new Sprite(messyTex);
-      // 원본 폭 유지 (사물 위치는 폭 1740 기준으로 잡혀 있음)
-      (this.sceneBackground as Sprite).width = BG_NATIVE_WIDTH;
+      // 폭 = bgDisplayWidth (생략 시 BG_NATIVE_WIDTH=1740)
+      (this.sceneBackground as Sprite).width = bgW;
       (this.sceneBackground as Sprite).height = GAME_HEIGHT;
       this.sceneContainer.addChildAt(this.sceneBackground, 0);
     } else {
       this.sceneBackground = new Graphics()
-        .rect(0, 0, BG_NATIVE_WIDTH, GAME_HEIGHT)
+        .rect(0, 0, bgW, GAME_HEIGHT)
         .fill({ color: COLORS.LV1_NAVY });
       this.sceneContainer.addChildAt(this.sceneBackground, 0);
     }

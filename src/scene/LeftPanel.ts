@@ -67,13 +67,14 @@ export class LeftPanel extends Container {
     this.addChild(this.slotsContainer);
 
     // 슬롯 영역 마스크 — 잘려서 반만 보이는 슬롯이 없도록 정수 슬롯만큼만 표시
-    // viewport = SLOT_TOP_PADDING + N * slotRow - GAP + 1.2x active 슬롯 여유(16px)
+    // viewport = SLOT_TOP_PADDING + N * slotRow - GAP + 1.26x active 슬롯 여유(24px)
     const slotRow = ITEM_SLOT_SIZE + ITEM_SLOT_GAP;
     const available = GAME_HEIGHT - PANEL_SCROLL_TOP - SLOT_TOP_PADDING + ITEM_SLOT_GAP;
     const fullSlotsVisible = Math.floor(available / slotRow);
     this.viewportHeight = SLOT_TOP_PADDING + fullSlotsVisible * slotRow - ITEM_SLOT_GAP + 24;
+    // 마스크 폭은 패널보다 50px 더 — active 슬롯 글로우가 잘리지 않게
     this.scrollMask = new Graphics()
-      .rect(0, PANEL_SCROLL_TOP, LEFT_PANEL_WIDTH, this.viewportHeight)
+      .rect(0, PANEL_SCROLL_TOP, LEFT_PANEL_WIDTH + 50, this.viewportHeight)
       .fill({ color: 0xffffff });
     this.addChild(this.scrollMask);
     this.slotsContainer.mask = this.scrollMask;

@@ -57,6 +57,9 @@ export interface SceneData {
   contentShiftX?: number;
   // 좌측 패널 / 씬 여백 배경 색 — 방 이미지 가장자리 색과 매칭 (생략 시 노란 0xefb63a)
   bgEdgeColor?: number;
+  // 배경 sprite 표시 폭 override — 생략 시 BG_NATIVE_WIDTH(1740) 사용
+  // 잘림 없이 씬 영역(1680)에 딱 맞추고 싶을 때 1680 지정
+  bgDisplayWidth?: number;
 }
 
 export type GamePhase = 'preview' | 'playing' | 'sucking' | 'reveal' | 'result';

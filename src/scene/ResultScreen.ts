@@ -109,12 +109,15 @@ export class ResultScreen extends Container {
   }
 
   private async renderStars(stars: number): Promise<void> {
-    // 별 사이즈 — 좌/우 420, 가운데 750 (가운데 1.5x)
-    // 가운데 별이 크니까 y 도 약간 아래로 옮겨 화면 위로 잘리지 않게
+    // 가운데 별 — 양쪽보다 약간 위 + 사이즈 2x (1500)
+    const SIDE_Y = 350;
+    const SIDE_SIZE = 420;
+    const CENTER_Y = 280;     // 좌우보다 70px 위
+    const CENTER_SIZE = 1500; // 좌우 대비 ~3.5x, 직전 750 의 2x
     const starConfigs = [
-      { x: 510 + 189 * 1.42, y: 20.7 + 203 * 1.42, size: 420 },
-      { x: GAME_WIDTH / 2,    y: 400,                size: 750 },
-      { x: 510 + 435 * 1.42, y: 20.7 + 200 * 1.42, size: 420 },
+      { x: 510 + 189 * 1.42, y: SIDE_Y,   size: SIDE_SIZE },
+      { x: GAME_WIDTH / 2,    y: CENTER_Y, size: CENTER_SIZE },
+      { x: 510 + 435 * 1.42, y: SIDE_Y,   size: SIDE_SIZE },
     ];
 
     // PNG 자산 로드 (실패 시 이모지 fallback)

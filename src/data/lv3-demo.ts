@@ -99,8 +99,9 @@ export const LV3_DEMO: SceneData = {
     position: { x: 425, y: 758 },
     size: 200,
   },
-  // 방 콘텐츠 중앙쪽으로 (이전 -260 은 너무 좌측)
-  contentShiftX: -100,
+  // 씬 영역(1680)에 딱 맞춰서 잘림 0
+  contentShiftX: 0,
+  bgDisplayWidth: 1680,
   // 방 이미지 가장자리 색과 동일 (#0fb97e — 초록)
   bgEdgeColor: 0x0fb97e,
 };
