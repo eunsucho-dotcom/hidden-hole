@@ -96,7 +96,7 @@ export const LV3_DEMO: SceneData = {
   interactiveObjects: [],
   timeLimit: 120,
   pig: {
-    position: { x: 425, y: 758 },
+    position: { x: 840, y: 700 },  // 카페트 중앙 (bg 1680x1080 기준)
     size: 200,
   },
   // 씬 영역(1680)에 딱 맞춰서 잘림 0

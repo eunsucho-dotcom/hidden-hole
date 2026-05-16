@@ -259,11 +259,13 @@ export class ResultScreen extends Container {
     return btn;
   }
 
-  /** popup_bg 우상단 모서리에 X 닫기 버튼 — 클릭 시 home, 드래그로 위치 조정 */
+  /** popup_bg 우상단 모서리에 X 닫기 버튼 — 클릭 시 home, 드래그로 위치 조정, localStorage 에 저장 */
   private renderCloseButton(): void {
-    // 패널: 표시 900×879, 중앙 (960, 460), 우상단 모서리 (1410, 20)
+    // localStorage 에 저장된 위치 있으면 그거 사용, 없으면 기본값
     const btn = new Container();
-    btn.position.set(1410, 35);
+    const savedX = parseFloat(localStorage.getItem('closeBtnX') ?? '1410');
+    const savedY = parseFloat(localStorage.getItem('closeBtnY') ?? '35');
+    btn.position.set(savedX, savedY);
     const SIZE = 90;
     Assets.load('./images/popup_x.png')
       .then((tex: Texture) => {
@@ -310,11 +312,12 @@ export class ResultScreen extends Container {
       isDragging = false;
       btn.cursor = 'pointer';
       if (dragMoved) {
-        const coords = `X 위치: (${Math.round(btn.x)}, ${Math.round(btn.y)})`;
-        console.log(`%c📍 ${coords}`, 'color:#ff9f68;font-weight:bold;font-size:14px');
-        try {
-          navigator.clipboard?.writeText(`btn.position.set(${Math.round(btn.x)}, ${Math.round(btn.y)});`);
-        } catch {}
+        const x = Math.round(btn.x);
+        const y = Math.round(btn.y);
+        // 새 위치를 localStorage 에 저장 → 페이지 새로고침해도 유지
+        localStorage.setItem('closeBtnX', String(x));
+        localStorage.setItem('closeBtnY', String(y));
+        console.log(`%c📍 X 위치 저장됨: (${x}, ${y})`, 'color:#ff9f68;font-weight:bold;font-size:14px');
       }
     };
     btn.on('pointerup', endDrag);

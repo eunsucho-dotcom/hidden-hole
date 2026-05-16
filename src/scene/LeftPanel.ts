@@ -72,9 +72,9 @@ export class LeftPanel extends Container {
     const available = GAME_HEIGHT - PANEL_SCROLL_TOP - SLOT_TOP_PADDING + ITEM_SLOT_GAP;
     const fullSlotsVisible = Math.floor(available / slotRow);
     this.viewportHeight = SLOT_TOP_PADDING + fullSlotsVisible * slotRow - ITEM_SLOT_GAP + 24;
-    // 마스크 폭은 패널보다 50px 더 — active 슬롯 글로우가 잘리지 않게
+    // 글로우 효과 제거 후 마스크는 패널 폭 그대로
     this.scrollMask = new Graphics()
-      .rect(0, PANEL_SCROLL_TOP, LEFT_PANEL_WIDTH + 50, this.viewportHeight)
+      .rect(0, PANEL_SCROLL_TOP, LEFT_PANEL_WIDTH, this.viewportHeight)
       .fill({ color: 0xffffff });
     this.addChild(this.scrollMask);
     this.slotsContainer.mask = this.scrollMask;
@@ -547,17 +547,8 @@ class CategorySlot extends Container {
       } else if (this.state === 'locked') {
         this.bgSprite!.tint = 0xb8b8b8; // 회색조 (꺼진 느낌)
       } else if (this.state === 'active') {
-        this.bgSprite!.tint = 0xffffff; // 원본 + 외곽 글로우 추가
-        // 부드러운 주황 글로우 — 4겹 레이어드 (바깥일수록 옅어짐)
-        this.activeRing = new Graphics();
-        for (let i = 4; i >= 1; i--) {
-          const exp = i * 7;
-          this.activeRing
-            .roundRect(-exp, -exp, ITEM_SLOT_SIZE + exp * 2, ITEM_SLOT_SIZE + exp * 2, 22 + exp)
-            .fill({ color: COLORS.SUNSET_ORANGE, alpha: 0.13 });
-        }
-        // 슬롯 bg 뒤에 (addChildAt 0)
-        this.addChildAt(this.activeRing, 0);
+        // 글로우 효과 제거 — tint 만 (원본 색)
+        this.bgSprite!.tint = 0xffffff;
       } else {
         this.bgSprite!.tint = 0xffd8a8; // 오렌지 틴트 (완료)
       }
