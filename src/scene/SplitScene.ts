@@ -809,7 +809,7 @@ export class SplitScene extends Container {
     }
   }
 
-  private handleInteractionComplete(revealsTrashIds: string[]): void {
+  private async handleInteractionComplete(revealsTrashIds: string[]): Promise<void> {
     // 숨은 쓰레기 노출 (씬에서)
     for (const id of revealsTrashIds) {
       const trash = this.trashSprites.find((t) => t.data.id === id);
@@ -821,6 +821,10 @@ export class SplitScene extends Container {
         // 좌측 패널: 숨은 카테고리 노출 (allHidden이었던 경우 새로 등장)
         const catInfo = this.allCategoryInfos.get(trash.data.category);
         if (catInfo && catInfo.allHidden) {
+          // 실제 PNG 텍스처를 슬롯 아이콘으로 사용 (액자, 반지 등)
+          try {
+            catInfo.texture = await Assets.load(trash.data.texture);
+          } catch {}
           this.leftPanel.revealHiddenCategory(catInfo);
         } else {
           // 부분 숨김 카테고리: 🔍 배지 깜빡임만

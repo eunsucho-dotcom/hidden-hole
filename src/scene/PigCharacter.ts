@@ -18,12 +18,19 @@ import { MouthPoofEffect } from './MouthPoofEffect';
 export class PigCharacter extends Container {
   private animSprite?: AnimatedSprite;
   private placeholder: Container;
+  private shadow: Graphics;
   private originalY: number;
   private idleTime = 0;
 
   constructor(private pigSize: number = 250) {
     super();
     this.originalY = 0;
+
+    // 그림자 — 발 아래 부드러운 타원 (먼저 추가해서 돼지보다 뒤에 렌더)
+    this.shadow = new Graphics()
+      .ellipse(0, this.pigSize * 0.44, this.pigSize * 0.34, this.pigSize * 0.075)
+      .fill({ color: 0x000000, alpha: 0.32 });
+    this.addChild(this.shadow);
 
     // 플레이스홀더 (스프라이트시트 로드 전)
     this.placeholder = this.createPlaceholder('🐷', 0xf4a6a6);
@@ -161,11 +168,17 @@ export class PigCharacter extends Container {
 
   /**
    * idle 미세 흔들림 (살아있는 느낌)
+   * 그림자는 바닥에 고정 — 돼지 떴다 가라앉을 때 그림자 크기로 거리 표현
    */
   updateIdle(deltaMs: number): void {
     this.idleTime += deltaMs;
     const phase = (this.idleTime / 2000) * Math.PI * 2;
-    this.y = this.originalY + Math.sin(phase) * 2;
+    const bob = Math.sin(phase) * 2;
+    this.y = this.originalY + bob;
+    // 그림자 — 컨테이너 bob 상쇄 + 떠 있을수록 살짝 작아짐
+    this.shadow.y = -bob;
+    const shadowScale = 1 - bob * 0.012;
+    this.shadow.scale.set(shadowScale, shadowScale);
   }
 
   setOriginalPosition(x: number, y: number): void {
