@@ -37,6 +37,15 @@ function freshSceneData(data: SceneData): SceneData {
   };
 }
 
+const LEVEL_SAVE_KEY = 'hiddenhole_current_level';
+
+function getLevelById(id: string): SceneData | null {
+  if (id === 'lv1') return LV1_DEMO;
+  if (id === 'lv2') return LV2_DEMO;
+  if (id === 'lv3') return LV3_DEMO;
+  return null;
+}
+
 /**
  * Hidden Hole (히든홀) — 엔트리 + 상태 관리
  *
@@ -72,6 +81,7 @@ class Game {
   }
 
   showTitle(): void {
+    localStorage.removeItem(LEVEL_SAVE_KEY);
     // 캔버스 + body 배경 — 타이틀 초록 톤 (검정 깜빡임 방지)
     const titleColor = 0x2a8c4a;
     this.app.renderer.background.color = titleColor;
@@ -126,6 +136,7 @@ class Game {
   }
 
   showLevel(data: SceneData): void {
+    localStorage.setItem(LEVEL_SAVE_KEY, data.id);
     // 캔버스 + body 배경 — clearScene 전에 새 씬 색으로 (전환 시 검정 깜빡임 제거)
     const bgColor = data.bgEdgeColor ?? 0xefb63a;
     this.app.renderer.background.color = bgColor;
@@ -252,13 +263,24 @@ async function main() {
   // 사운드 시스템 초기화
   initializeSounds();
 
-  // BGM 비활성화 — ASMR 컨셉상 무음이 효과적 (SFX가 주인공)
-  // 다시 켜고 싶으면 아래 주석 해제:
-  // window.addEventListener('pointerdown', () => audio.playBgm('bgm_lv1'), { once: true });
+  // 백그라운드 전환 시 사운드 자동 정지/재개 (Page Visibility API)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      audio.pauseAll();
+    } else {
+      audio.resumeAll();
+    }
+  });
 
-  // 게임 시작 — 타이틀 화면부터
+  // 게임 시작 — 마지막 플레이 레벨 있으면 바로 재개, 없으면 타이틀
   const game = new Game(app);
-  game.showTitle();
+  const savedLevelId = localStorage.getItem(LEVEL_SAVE_KEY);
+  const savedLevel = savedLevelId ? getLevelById(savedLevelId) : null;
+  if (savedLevel) {
+    game.showLevel(savedLevel);
+  } else {
+    game.showTitle();
+  }
 
   console.log('🎮 Hidden Hole 시작! 타이틀 → Play → Lv1 → 결과 → 다시');
 }

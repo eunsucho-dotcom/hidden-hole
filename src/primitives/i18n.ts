@@ -43,9 +43,7 @@ const messages: Record<Lang, Record<string, string>> = {
 let currentLang: Lang = detectLang();
 
 function detectLang(): Lang {
-  if (typeof navigator === 'undefined') return 'en';
-  const nav = navigator.language || (navigator as unknown as { userLanguage?: string }).userLanguage || 'en';
-  return nav.toLowerCase().startsWith('ko') ? 'ko' : 'en';
+  return 'en';
 }
 
 /** 키 기반 번역 */

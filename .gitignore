@@ -11,3 +11,7 @@ playforge-game.zip
 _make_zip.py
 _find_korean.py
 _korean_strings.txt
+
+# 빌드 바이너리 (GitHub 100MB 제한 초과)
+builds/
+upload/

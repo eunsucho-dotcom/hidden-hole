@@ -102,6 +102,16 @@ export class SoundManager {
     this.sounds.forEach((s) => s.stop());
     this.bgmCurrent = null;
   }
+
+  pauseAll(): void {
+    this.sounds.forEach((s) => s.pause());
+  }
+
+  resumeAll(): void {
+    if (this.muted) return;
+    // BGM만 재개 (SFX는 일회성이라 재개 불필요)
+    if (this.bgmCurrent) this.bgmCurrent.play();
+  }
 }
 
 // 싱글턴 (전역 접근용)
