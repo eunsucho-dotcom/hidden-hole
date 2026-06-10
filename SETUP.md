@@ -7,8 +7,6 @@
 
 1. **Claude Code 설치** — https://claude.com/claude-code
 2. **VPN 연결** (사내 패키지 서버 접근이 막혀 있을 경우)
-3. **codeb 토큰 발급** — https://aiproxy.backoffice.bagelgames.com/console/tokens
-   - 토큰은 기기마다 따로 발급. 발급한 토큰을 Claude에게 전달하면 로그인은 대신 해준다.
 
 ## 셋업 절차
 
@@ -35,9 +33,12 @@ Claude Code를 열고 아래 중 하나를 입력:
 - **bakery-plugins** — gen-2d, gen-3d, gen-audio, gen-fx, removebg, sam, bakery-viewer, mentor, vision-forge 등
 - **글로벌 rules** — `~/.claude/rules/`에 GameBakery 개발 규칙
 
-### 3. codeb 로그인
+### 3. codeb 로그인 (선택 — 이미지 생성은 따로 하므로 기본 스킵)
+
+AI 에셋 생성(codeb/gen-*)을 쓸 일이 생길 때만:
 
 ```bash
+# 토큰 발급(기기별): https://aiproxy.backoffice.bagelgames.com/console/tokens
 codeb login --token <발급받은 토큰>
 codeb whoami   # 확인
 ```
@@ -63,7 +64,6 @@ npm install
 ```bash
 node --version      # v22+
 codeb version
-codeb whoami
 game-eye --version
 playforge --version
 playforge doctor    # Android 빌드 환경 점검 (Java 21+ 필요 — 없으면 /playforge-remote로 원격 빌드 가능)
